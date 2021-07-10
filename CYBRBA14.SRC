@@ -1,0 +1,2115 @@
+DECLARE SUB getzoom ()
+DECLARE SUB radar ()
+DECLARE FUNCTION pyt! (px1!, py1!, px2!, py2!)
+DECLARE SUB bigboom ()
+DECLARE SUB compint ()
+DECLARE SUB astrop ()
+DECLARE SUB initturretfire (a!)
+DECLARE SUB turret ()
+DECLARE SUB palettechange ()
+DECLARE SUB telespawn ()
+DECLARE SUB badaboomhigh (a!)
+DECLARE SUB alfa (b$, ax!, ay!, JT!, c!, Box!)
+DECLARE SUB badaboom (a!)
+DECLARE SUB lazer ()
+DECLARE SUB renderships ()
+DECLARE SUB initmissile (a!, b)
+DECLARE SUB MISSILE ()
+DECLARE SUB events ()
+DECLARE SUB drawsprite ()
+DECLARE SUB loadsprites ()
+DECLARE SUB shots ()
+DECLARE SUB initshot (pl!)
+DECLARE SUB diskinit ()
+DECLARE SUB control ()
+DECLARE SUB calc ()
+DECLARE SUB statusbar ()
+DECLARE SUB delship ()
+DECLARE SUB drawship ()
+DECLARE SUB INIT ()
+SCREEN 12
+RANDOMIZE TIMER
+DIM SHARED ply(10, 1), equ(10, 1), slo(20, 1), shp(13, 1), sps(13, 1, 32), itemonscreen, itemonscreenx, itemonscreeny, itemonscreenframe, w1, w2, w4, statframe, unismogdx, w552, w6673
+DIM SHARED rocket2x(15, 15, 3), seeker2x(15, 15, 3), radiog2x(15, 15, 3), rocketsb(15, 15, 3), seekersb(15, 15, 3), radiogsb(15, 15, 3), medipack(15, 15, 3), nrgypack(15, 15, 3), weaplazr(15, 15, 3), locking(15, 15, 3), rocket4x(15, 15, 3),  _
+seeker4x(15, 15, 3), radiog4x(15, 15, 3), lsab(15, 15, 3)
+DIM SHARED p1rockets, p1seekers, p1radiogs, p0rockets, p0seekers, p0radiogs, black(20, 20)
+DIM SHARED missiles(7, 6), misraw(6, 1), misobj(6, 1), mis(6, 1, 32), particles(160, 3)
+DIM SHARED maxshots, shs(30, 1), shsdx(30, 1), shsra(30, 1), shspos(30, 1, 1), shotsout, shsspeed(30, 1), shsrate(1), datadump(5)
+DIM SHARED plyweap(10, 1), lazerpos(3, 1), lazeract(1), laztemp, range, mv
+DIM SHARED left(1), right(1), acc(1), brake(1), fireweap(1), firemiss(1), kb, snubb
+DIM SHARED undx, sppix(10, 0), sppiy(10, 0), sprad(0), spmor(0), putitem(0), stardelay(0)
+DIM SHARED turret0dx, turret1dx, plasmanfo(30, 4), respawn, zoom(15, 15)
+DIM SHARED spread(1), spreadf(15, 15, 3), zom
+DIM SHARED grphcs$
+DIM SHARED aprate(1), apactive(1), apspeed(1), apchrg(1), apfire(1)
+DIM SHARED l%, r%, m%, x%, y%, ox%, oy%
+DIM SHARED indx, indy, indx1, indy1, indx2, indy2, grey32, bbcol
+DIM SHARED green
+
+CONST PI = 3.141593
+CALL INIT
+DO
+undx = unismogdx
+ CALL telespawn
+ CALL delship
+ CALL control
+ CALL compint
+ CALL astrop
+ CALL calc
+ CALL drawship
+ CALL radar
+ CALL turret
+ CALL MISSILE
+ CALL shots
+ CALL events
+ CALL lazer
+IF grey32 >= 1 THEN CALL bigboom
+
+'WAIT &H3DA, 8
+
+oy% = y%
+ox% = x%
+'CALL mouseposition(y%, x%, 0)
+'CALL mousescroll(l%, m%, r%)
+
+LOOP
+
+
+'0  DX                 
+'1  X                  
+'2  Y                     
+'3    
+'4  RIGHT MISSILE RELOAD TIME
+'5  LEFT MISSILE RELOAD TIME
+'6  HEALTH             
+'7  ENERGYLEVEL        
+'8  ACCELERATION       
+'9  WEAPON                 
+'10                  
+
+SUB alfa (b$, ax, ay, JT, c, Box)
+ax = ax - 6
+FOR n = 1 TO LEN(b$)
+t$ = UCASE$(MID$(b$, n, 1))
+IF t$ = "A" THEN GOSUB a
+IF t$ = "B" THEN GOSUB b
+IF t$ = "C" THEN GOSUB c
+IF t$ = "D" THEN GOSUB D
+IF t$ = "E" THEN GOSUB e
+IF t$ = "F" THEN GOSUB f
+IF t$ = "G" THEN GOSUB g
+IF t$ = "H" THEN GOSUB h
+IF t$ = "I" THEN GOSUB I
+IF t$ = "J" THEN GOSUB J
+IF t$ = "K" THEN GOSUB K
+IF t$ = "L" THEN GOSUB l
+IF t$ = "M" THEN GOSUB m
+IF t$ = "N" THEN GOSUB n
+IF t$ = "O" THEN GOSUB o
+IF t$ = "P" THEN GOSUB p
+IF t$ = "Q" THEN GOSUB Q
+IF t$ = "R" THEN GOSUB r
+IF t$ = "S" THEN GOSUB s
+IF t$ = "T" THEN GOSUB t
+IF t$ = "U" THEN GOSUB U
+IF t$ = "V" THEN GOSUB V
+IF t$ = "W" THEN GOSUB w
+IF t$ = "X" THEN GOSUB x
+IF t$ = "Y" THEN GOSUB y
+IF t$ = "Z" THEN GOSUB Z
+IF t$ = "?" THEN GOSUB fr
+IF t$ = "!" THEN GOSUB ut
+IF t$ = "." THEN GOSUB pnkt
+IF t$ = "," THEN GOSUB komma
+IF t$ = "0" THEN GOSUB o
+IF t$ = "1" THEN GOSUB I
+IF t$ = "2" THEN GOSUB 2
+IF t$ = "3" THEN GOSUB 3
+IF t$ = "4" THEN GOSUB 4
+IF t$ = "5" THEN GOSUB s
+IF t$ = "6" THEN GOSUB 6
+IF t$ = "7" THEN GOSUB 7
+IF t$ = "8" THEN GOSUB 8
+IF t$ = "9" THEN GOSUB 9
+FOR Jostim = 1 TO JT * 100
+NEXT Jostim
+NEXT n
+IF Box = 1 THEN LINE (ax - 2, ay - 2)-(ax + n * 6, ay + 6), c, B
+EXIT SUB
+a:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE (ax + n * 6, ay + 3)-(ax + n * 6 + 3, ay + 3), c
+RETURN
+
+b:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 3, ay + 1), c
+LINE -(ax + n * 6 + 2, ay + 2), c
+LINE -(ax + n * 6 + 1, ay + 2), c
+LINE -(ax + n * 6 + 2, ay + 2), c
+LINE -(ax + n * 6 + 3, ay + 3), c
+LINE -(ax + n * 6 + 2, ay + 4), c
+LINE -(ax + n * 6, ay + 4), c
+RETURN
+
+c:
+LINE (ax + n * 6 + 3, ay + 1)-(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 1, ay), c
+LINE -(ax + n * 6, ay + 1), c
+LINE -(ax + n * 6, ay + 3), c
+LINE -(ax + n * 6 + 1, ay + 4), c
+LINE -(ax + n * 6 + 2, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 3), c
+RETURN
+
+D:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 3, ay + 1), c
+LINE -(ax + n * 6 + 3, ay + 3), c
+LINE (ax + n * 6 + 2, ay + 4)-(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6, ay), c
+RETURN
+
+e:
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE (ax + n * 6, ay + 2)-(ax + n * 6 + 1, ay + 2), c
+RETURN
+
+f:
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE (ax + n * 6, ay + 2)-(ax + n * 6 + 1, ay + 2), c
+RETURN
+
+g:
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 2, ay + 2), c
+RETURN
+
+h:
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 4), c
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6 + 3, ay + 4), c
+LINE (ax + n * 6, ay + 2)-(ax + n * 6 + 3, ay + 2), c
+RETURN
+
+I:
+LINE (ax + n * 6 + 2, ay)-(ax + n * 6 + 2, ay + 4), c
+RETURN
+
+J:
+LINE (ax + n * 6, ay + 3)-(ax + n * 6 + 1, ay + 4), c
+LINE -(ax + n * 6 + 2, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 3), c
+LINE -(ax + n * 6 + 3, ay), c
+RETURN
+
+K:
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 4), c
+LINE (ax + n * 6 + 1, ay + 2)-(ax + n * 6 + 3, ay), c
+LINE (ax + n * 6 + 1, ay + 2)-(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+l:
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+m:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 1, ay + 1), c
+LINE -(ax + n * 6 + 2, ay + 1), c
+LINE -(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+n:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6 + 3, ay), c
+RETURN
+
+o:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay + 4), c, B
+RETURN
+
+p:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 3, ay + 1), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 2, ay + 3), c
+LINE -(ax + n * 6, ay + 3), c
+RETURN
+
+Q:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay + 4), c, B
+LINE (ax + n * 6 + 2, ay + 3)-(ax + n * 6 + 2, ay + 3), c
+RETURN
+
+r:
+LINE (ax + n * 6, ay + 4)-(ax + n * 6, ay), c
+LINE -(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 3, ay + 1), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 2, ay + 3), c
+LINE -(ax + n * 6, ay + 3), c
+PSET (ax + n * 6 + 3, ay + 4), c
+RETURN
+
+s:
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 2), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6, ay + 4), c
+RETURN
+
+t:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 4, ay), c
+LINE (ax + n * 6 + 2, ay)-(ax + n * 6 + 2, ay + 4), c
+RETURN
+
+U:
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6 + 3, ay), c
+RETURN
+
+V:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 2, ay + 4), c
+LINE -(ax + n * 6 + 4, ay), c
+RETURN
+
+w:
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 4), c
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6 + 3, ay + 4), c
+LINE (ax + n * 6, ay + 3)-(ax + n * 6 + 3, ay + 3), c
+RETURN
+
+x:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 4, ay + 4), c
+LINE (ax + n * 6 + 4, ay)-(ax + n * 6, ay + 4), c
+RETURN
+
+y:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 2, ay + 3), c
+LINE (ax + n * 6 + 2, ay + 2)-(ax + n * 6 + 4, ay), c
+LINE (ax + n * 6 + 2, ay + 3)-(ax + n * 6 + 2, ay + 4), c
+RETURN
+
+Z:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+fr:
+LINE (ax + n * 6, ay)-(ax + n * 6 + 2, ay), c
+LINE -(ax + n * 6 + 3, ay + 1), c
+LINE -(ax + n * 6 + 2, ay + 2), c
+LINE -(ax + n * 6 + 1, ay + 2), c
+LINE (ax + n * 6 + 1, ay + 4)-(ax + n * 6 + 2, ay + 4), c
+RETURN
+
+ut:
+LINE (ax + n * 6 + 2, ay)-(ax + n * 6 + 2, ay + 2), c
+PSET (ax + n * 6 + 2, ay + 4), c
+RETURN
+
+2
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6, ay + 2), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+3
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6, ay + 4), c
+LINE (ax + n * 6, ay + 2)-(ax + n * 6 + 3, ay + 2), c
+RETURN
+
+4
+LINE (ax + n * 6, ay)-(ax + n * 6, ay + 2), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE (ax + n * 6 + 3, ay + 4)-(ax + n * 6 + 3, ay), c
+RETURN
+
+6
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 1, ay + 2), c
+RETURN
+
+7
+LINE (ax + n * 6, ay)-(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+RETURN
+
+8
+LINE (ax + n * 6 + 3, ay)-(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 4), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+LINE -(ax + n * 6 + 1, ay + 2), c
+PSET (ax + n * 6 + 3, ay + 1), c
+RETURN
+
+9
+LINE (ax + n * 6 + 3, ay + 4)-(ax + n * 6 + 3, ay), c
+LINE -(ax + n * 6, ay), c
+LINE -(ax + n * 6, ay + 2), c
+LINE -(ax + n * 6 + 3, ay + 2), c
+RETURN
+pnkt:
+PSET (ax + n * 6 + 2, ay + 4), c
+RETURN
+komma:
+PSET (ax + n * 6 + 2, ay + 4), c
+PSET (ax + n * 6 + 3, ay + 3), c
+RETURN
+END SUB
+
+SUB astrop
+IF apfire(0) = 1 THEN a = 0: GOTO 989
+IF apfire(1) = 1 THEN a = 1: GOTO 989
+EXIT SUB
+989
+IF apactive(a) = 1 THEN
+apspeed(a) = SIN(aprate(a) / 100 * PI) * 10 * apchrg(a) * 1.3      'apspeed(1) - 1
+aprate(a) = aprate(a) - 3
+IF aprate(a) < 0 THEN apactive(a) = 0: apspeed(a) = 0: apchrg(a) = 0: apfire(a) = 0
+IF a = 1 AND apfire(1) = 1 THEN EXIT SUB
+END IF
+IF apfire(1) = 1 THEN a = 1: GOTO 989
+END SUB
+
+SUB badaboom (a)
+
+IF a = 0 THEN
+ FOR I = 1 TO 250
+  LINE (ply(1, 0), ply(2, 0))-((RND * 20) + ply(1, 0) - 10, (RND * 20) + ply(2, 0) - 10), 14
+  LINE (ply(1, 0), ply(2, 0))-((RND * 30) + ply(1, 0) - 15, (RND * 30) + ply(2, 0) - 15), 12
+  LINE (ply(1, 0), ply(2, 0))-((RND * 40) + ply(1, 0) - 20, (RND * 40) + ply(2, 0) - 20), 4
+ NEXT I
+END IF
+
+IF a = 1 THEN
+ FOR I = 1 TO 250
+  LINE (ply(1, 1), ply(2, 1))-((RND * 20) + ply(1, 1) - 10, (RND * 20) + ply(2, 1) - 10), 14
+  LINE (ply(1, 1), ply(2, 1))-((RND * 30) + ply(1, 1) - 15, (RND * 30) + ply(2, 1) - 15), 12
+  LINE (ply(1, 1), ply(2, 1))-((RND * 40) + ply(1, 1) - 20, (RND * 40) + ply(2, 1) - 20), 4
+ NEXT I
+END IF
+
+red1 = 62
+green1 = 32
+blue1 = 32
+red2 = 62
+green2 = 0
+blue2 = 0
+red3 = 32
+green3 = 0
+blue3 = 0
+grey = 1
+
+DO
+ PALETTE 14, 65536 * INT(blue1 * grey + 1) + 256 * INT(green1 * grey + 1) + INT(red1 * grey + 1)
+ PALETTE 12, 65536 * INT(blue2 * grey + 1) + 256 * INT(green2 * grey + 1) + INT(red2 * grey + 1)
+ PALETTE 4, 65536 * INT(blue3 * grey + 1) + 256 * INT(green3 * grey + 1) + INT(red3 * grey + 1)
+ grey = grey - .03
+LOOP UNTIL grey < .02
+
+IF a = 0 THEN
+LINE (ply(1, 0) - 20, ply(2, 0) - 20)-(ply(1, 0) + 20, ply(2, 0) + 20), 0, BF
+
+grey15 = 63
+grey14 = 48
+grey12 = 32
+grey4 = 16
+grey = 1
+
+PLAY "L64 MB O1 baGFEDC O0 baGFEDC "
+DO
+ PALETTE 15, 65536 * INT(grey15 * grey) + 256 * INT(grey15 * grey) + INT(grey15 * grey)
+ PALETTE 14, 65536 * INT(grey14 * grey) + 256 * INT(grey14 * grey) + INT(grey14 * grey)
+ PALETTE 12, 65536 * INT(grey12 * grey) + 256 * INT(grey12 * grey) + INT(grey12 * grey)
+ PALETTE 4, 65536 * INT(grey4 * grey) + 256 * INT(grey4 * grey) + INT(grey4 * grey)
+ grey = grey - .02
+ siz = siz + 3'.2 + grey
+
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 15, 4
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 12, 15
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 9, 14
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 6, 12
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 3, 4
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 0, 0
+
+
+LOOP UNTIL grey < .01
+
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 15, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 12, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 9, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 6, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 3, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 0, 0
+
+
+END IF
+
+IF a = 1 THEN
+
+LINE (ply(1, 1) - 20, ply(2, 1) - 20)-(ply(1, 1) + 20, ply(2, 1) + 20), 0, BF
+
+grey15 = 63
+grey14 = 48
+grey12 = 32
+grey4 = 16
+grey = 1
+
+PLAY "L64 MB O1 baGFEDC O0 baGFEDC "
+DO
+ PALETTE 15, 65536 * INT(grey15 * grey) + 256 * INT(grey15 * grey) + INT(grey15 * grey)
+ PALETTE 14, 65536 * INT(grey14 * grey) + 256 * INT(grey14 * grey) + INT(grey14 * grey)
+ PALETTE 12, 65536 * INT(grey12 * grey) + 256 * INT(grey12 * grey) + INT(grey12 * grey)
+ PALETTE 4, 65536 * INT(grey4 * grey) + 256 * INT(grey4 * grey) + INT(grey4 * grey)
+ grey = grey - .03
+ siz = siz + 3'.2 + grey
+
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 15, 4
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 12, 15
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 9, 14
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 6, 12
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 3, 4
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 0, 0
+
+
+LOOP UNTIL grey < .02
+
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 15, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 12, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 9, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 6, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 3, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 0, 0
+
+END IF
+
+PALETTE
+
+grey = 0
+PLAY "L64 MB O0 cdefgab L64 O1 baGFEDC O0 baGFEDC"
+DO
+ PALETTE 0, 65536 * grey + 256 * grey + grey
+ grey = grey + 2
+LOOP UNTIL grey > 63
+DO
+ grey = grey - 2
+ PALETTE 0, 65536 * grey + 256 * grey + grey
+LOOP UNTIL grey < 2
+
+PALETTE
+
+
+
+END SUB
+
+SUB badaboomhigh (a)
+IF a = 0 THEN
+ FOR I = 1 TO 450
+  LINE (ply(1, 0), ply(2, 0))-((RND * 20) + ply(1, 0) - 10, (RND * 20) + ply(2, 0) - 10), 14
+  LINE (ply(1, 0), ply(2, 0))-((RND * 30) + ply(1, 0) - 15, (RND * 30) + ply(2, 0) - 15), 12
+  LINE (ply(1, 0), ply(2, 0))-((RND * 40) + ply(1, 0) - 20, (RND * 40) + ply(2, 0) - 20), 4
+ NEXT I
+END IF
+
+IF a = 1 THEN
+ FOR I = 1 TO 450
+  LINE (ply(1, 1), ply(2, 1))-((RND * 20) + ply(1, 1) - 10, (RND * 20) + ply(2, 1) - 10), 14
+  LINE (ply(1, 1), ply(2, 1))-((RND * 30) + ply(1, 1) - 15, (RND * 30) + ply(2, 1) - 15), 12
+  LINE (ply(1, 1), ply(2, 1))-((RND * 40) + ply(1, 1) - 20, (RND * 40) + ply(2, 1) - 20), 4
+ NEXT I
+END IF
+
+red1 = 62
+green1 = 32
+blue1 = 32
+red2 = 62
+green2 = 0
+blue2 = 0
+red3 = 32
+green3 = 0
+blue3 = 0
+grey = 1
+
+DO
+ PALETTE 14, 65536 * INT(blue1 * grey + 1) + 256 * INT(green1 * grey + 1) + INT(red1 * grey + 1)
+ PALETTE 12, 65536 * INT(blue2 * grey + 1) + 256 * INT(green2 * grey + 1) + INT(red2 * grey + 1)
+ PALETTE 4, 65536 * INT(blue3 * grey + 1) + 256 * INT(green3 * grey + 1) + INT(red3 * grey + 1)
+ FOR I = 1 TO 3000
+ NEXT I
+ grey = grey - .01
+LOOP UNTIL grey < .02
+
+IF a = 0 THEN
+LINE (ply(1, 0) - 20, ply(2, 0) - 20)-(ply(1, 0) + 20, ply(2, 0) + 20), 0, BF
+
+grey15 = 63
+grey14 = 48
+grey12 = 32
+grey4 = 16
+grey = 1
+
+PLAY "L64 MB O1 baGFEDC O0 baGFEDC "
+DO
+ PALETTE 15, 65536 * INT(grey15 * grey) + 256 * INT(grey15 * grey) + INT(grey15 * grey)
+ PALETTE 14, 65536 * INT(grey14 * grey) + 256 * INT(grey14 * grey) + INT(grey14 * grey)
+ PALETTE 12, 65536 * INT(grey12 * grey) + 256 * INT(grey12 * grey) + INT(grey12 * grey)
+ PALETTE 4, 65536 * INT(grey4 * grey) + 256 * INT(grey4 * grey) + INT(grey4 * grey)
+ FOR I = 1 TO 500
+ NEXT I
+ grey = grey - .01
+ siz = siz + 1'.2 + grey
+
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 5, 4
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 4, 15
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 3, 14
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 2, 12
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 1, 4
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 0, 0
+
+
+LOOP UNTIL grey < .01
+
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 5, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 4, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 3, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 2, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 1, 0
+ CIRCLE (ply(1, 0), ply(2, 0)), siz + 0, 0
+
+
+END IF
+
+IF a = 1 THEN
+
+LINE (ply(1, 1) - 20, ply(2, 1) - 20)-(ply(1, 1) + 20, ply(2, 1) + 20), 0, BF
+
+grey15 = 63
+grey14 = 48
+grey12 = 32
+grey4 = 16
+grey = 1
+
+PLAY "L64 MB O1 baGFEDC O0 baGFEDC "
+DO
+ PALETTE 15, 65536 * INT(grey15 * grey) + 256 * INT(grey15 * grey) + INT(grey15 * grey)
+ PALETTE 14, 65536 * INT(grey14 * grey) + 256 * INT(grey14 * grey) + INT(grey14 * grey)
+ PALETTE 12, 65536 * INT(grey12 * grey) + 256 * INT(grey12 * grey) + INT(grey12 * grey)
+ PALETTE 4, 65536 * INT(grey4 * grey) + 256 * INT(grey4 * grey) + INT(grey4 * grey)
+ FOR I = 1 TO 500
+ NEXT I
+ grey = grey - .01
+ siz = siz + 1'.2 + grey
+
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 5, 4
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 4, 15
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 3, 14
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 2, 12
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 1, 4
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 0, 0
+
+
+LOOP UNTIL grey < .01
+
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 5, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 4, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 3, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 2, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 1, 0
+ CIRCLE (ply(1, 1), ply(2, 1)), siz + 0, 0
+
+END IF
+
+PALETTE
+
+grey = 0
+PLAY "L64 MB O0 cdefgab L64 O1 baGFEDC O0 baGFEDC"
+DO
+ PALETTE 0, 65536 * grey + 256 * grey + grey
+ FOR I = 1 TO 85
+ NEXT I
+ grey = grey + 1
+LOOP UNTIL grey > 63
+DO
+ FOR I = 1 TO 8500
+ NEXT I
+ grey = grey - 1
+ PALETTE 0, 65536 * grey + 256 * grey + grey
+LOOP UNTIL grey < 2
+
+PALETTE
+
+
+
+
+
+END SUB
+
+SUB bigboom
+
+IF bbcol = 2 THEN green32 = 4
+IF bbcol = 1 THEN blue32 = 4
+IF bbcol = 4 THEN red32 = 4
+
+
+grey32 = grey32 - 1
+IF grey32 < 0 THEN grey32 = 0: red32 = 0: greed32 = 0: blue32 = 0
+IF grey32 > 16 THEN grey32 = 0: red32 = 0: greed32 = 0: blue32 = 0
+PALETTE 0, 65536 * (grey32 + red32) + 256 * (grey32 + green32) + (grey32 + blue32)
+
+
+
+END SUB
+
+SUB calc
+'UNIVERSIAL
+IF ply(1, 0) > ply(1, 1) THEN angtothr = ATN((ply(2, 0) - ply(2, 1)) / (ply(1, 0) - (ply(1, 1))))
+IF ply(1, 0) < ply(1, 1) THEN angtothr = ATN((ply(2, 0) - ply(2, 1)) / (ply(1, 0) - (ply(1, 1)))) + PI
+range = SQR((ply(2, 0) - ply(2, 1)) ^ 2 + (ply(1, 0) - ply(1, 1)) ^ 2)
+unismogdx = unismogdx + 1
+
+' "Broklyn" BOUNCE
+IF range < 20 THEN
+ ply(0, 0) = angtothr
+ ply(6, 0) = ply(6, 0) - 1
+ ply(8, 0) = ply(8, 0) / 2
+
+ ply(0, 1) = angtothr + PI
+ ply(6, 1) = ply(6, 1) - 1
+ ply(8, 1) = ply(8, 1) / 2
+END IF
+
+'energy
+IF ply(6, 0) > 100 THEN ply(6, 0) = 100
+IF ply(6, 1) > 100 THEN ply(6, 1) = 100
+IF ply(7, 0) > 100 THEN ply(7, 0) = 100
+IF ply(7, 1) > 100 THEN ply(7, 1) = 100
+IF ply(7, 0) < 0 THEN ply(7, 0) = 0
+IF ply(7, 1) < 0 THEN ply(7, 1) = 0
+
+
+'Propultion Systems Player 0
+ply(1, 0) = COS(ply(0, 0)) * (ply(8, 0) + apspeed(0)) + ply(1, 0)'p0x=cos(dx)*rflt+ltx
+ply(2, 0) = SIN(ply(0, 0)) * (ply(8, 0) + apspeed(0)) + ply(2, 0)'p0x=sin(dx)*rflt+lty
+
+'Propultion Systems  Player 1                                    
+ply(1, 1) = COS(ply(0, 1)) * (ply(8, 1) + apspeed(1)) + ply(1, 1)'p1x=cos(dx)*rflt+ltx
+ply(2, 1) = SIN(ply(0, 1)) * (ply(8, 1) + apspeed(1)) + ply(2, 1)'p1x=sin(dx)*rflt+lty
+
+
+' RESTRICTIONS  Player 0
+IF ply(0, 0) >= PI THEN ply(0, 0) = ply(0, 0) - (PI * 2)
+IF ply(0, 0) <= -PI THEN ply(0, 0) = ply(0, 0) + (PI * 2)
+IF ply(1, 0) > 580 THEN ply(1, 0) = 60
+IF ply(1, 0) < 60 THEN ply(1, 0) = 580
+IF ply(2, 0) > 460 THEN ply(2, 0) = 20
+IF ply(2, 0) < 20 THEN ply(2, 0) = 460
+IF ply(3, 0) > 3 THEN ply(3, 0) = 1
+IF ply(3, 0) < 1 THEN ply(3, 0) = 3
+shsrate(0) = shsrate(0) + .1
+IF spread(0) = 1 THEN shsrate(0) = shsrate(0) + .1
+
+' RESTRICTIONS  Player 1
+IF ply(0, 1) >= PI THEN ply(0, 1) = ply(0, 1) - (PI * 2)
+IF ply(0, 1) <= -PI THEN ply(0, 1) = ply(0, 1) + (PI * 2)
+IF ply(1, 1) > 580 THEN ply(1, 1) = 60
+IF ply(1, 1) < 60 THEN ply(1, 1) = 580
+IF ply(2, 1) > 460 THEN ply(2, 1) = 20
+IF ply(2, 1) < 20 THEN ply(2, 1) = 460
+IF ply(3, 1) > 3 THEN ply(3, 1) = 1
+IF ply(3, 1) < 1 THEN ply(3, 1) = 3
+shsrate(1) = shsrate(1) + .1
+IF spread(1) = 1 THEN shsrate(1) = shsrate(1) + .1
+
+IF putitem(0) = 1 THEN
+ a = CINT(RND * 9) + 1
+ IF a = 7 THEN a = 5
+ IF a = 8 THEN a = 5
+ IF a = 9 THEN a = 1
+ itemonscreen = a
+  itemonscreenx = 313
+  itemonscreeny = 233
+ putitem(0) = 0
+END IF
+
+a = 0
+
+'MISSILE RELOAD
+IF ply(4, 0) > 0 AND p0rockets > 0 THEN ply(4, 0) = ply(4, 0) - 1
+IF ply(5, 0) > 0 AND p0rockets > 1 THEN ply(5, 0) = ply(5, 0) - 1
+
+IF ply(4, 1) > 0 AND p1rockets > 0 THEN ply(4, 1) = ply(4, 1) - 1
+IF ply(5, 1) > 0 AND p1rockets > 1 THEN ply(5, 1) = ply(5, 1) - 1
+
+'energy up
+ply(7, 0) = ply(7, 0) + .15: IF ply(7, 0) > 100 THEN ply(7, 0) = 100
+ply(7, 1) = ply(7, 1) + .15: IF ply(7, 1) > 100 THEN ply(7, 1) = 100
+END SUB
+
+SUB compint
+
+' SENSORS
+
+' MISSILEFIRE
+b = 0
+DO
+ 
+ IF missiles(b, 3) > 0 THEN
+  'Range and Angle to Missile
+  plotrange = SQR(((ply(1, 0) - missiles(b, 1)) ^ 2) + ((ply(2, 0) - missiles(b, 2)) ^ 2))
+  IF ply(1, 0) > missiles(b, 1) THEN plotangle = ATN((ply(2, 0) - missiles(b, 2)) / ((ply(1, 0) - missiles(b, 1))))
+  IF ply(1, 0) < missiles(b, 1) THEN plotangle = ATN((ply(2, 0) - missiles(b, 2)) / ((ply(1, 0) - missiles(b, 1)))) + PI
+
+
+  'Incomming Warning
+  IF plotrange < 200 THEN
+   incclose = 1
+   incangle = plotangle
+   woutforx = missiles(b, 1)
+   woutfory = missiles(b, 2)
+   END IF
+  IF plotrange < 50 OR apchrg(0) >= 1 OR ply(7, 0) < 0 THEN
+   fireiminent = 1
+   END IF
+
+  END IF
+
+ b = b + 1
+LOOP UNTIL b > 7
+b = 0
+
+
+' TURRETFIRE
+b = 0
+DO
+
+ IF plasmanfo(b, 3) > 0 THEN
+  'Range and Angle to Plasma Shot
+  plotrange = SQR(((ply(1, 0) - plasmanfo(b, 1)) ^ 2) + ((ply(2, 0) - plasmanfo(b, 2)) ^ 2))
+  IF ply(1, 0) > plasmanfo(b, 1) THEN plotangle = ATN((ply(2, 0) - plasmanfo(b, 2)) / ((ply(1, 0) - plasmanfo(b, 1))))
+  IF ply(1, 0) < plasmanfo(b, 1) THEN plotangle = ATN((ply(2, 0) - plasmanfo(b, 2)) / ((ply(1, 0) - plasmanfo(b, 1)))) + PI
+ 
+  
+  'Incomming Warning
+  IF plotrange < 200 THEN
+   incclose = 1
+   incangle = plotangle
+   woutforx = plasmanfo(b, 1)
+   woutfory = plasmanfo(b, 2)
+   END IF
+  IF plotrange < 50 OR apchrg(0) >= 1 OR ply(7, 0) < 0 THEN
+   fireiminent = 1
+   END IF
+ 
+  END IF
+
+ b = b + 1
+LOOP UNTIL b > 30
+b = 0
+
+
+
+' STRATEGIC MODE SELECT
+cmode = 1                                                    'Normal Attack
+cmode = 6                                                    'Chicken out
+IF ply(6, 1) < 50 OR ply(6, 0) > 25 AND p0rockets > 1 THEN cmode = 3 'Heavy Attack
+IF ply(7, 0) < 75 AND itemonscreen = 5 THEN cmode = 2        'Get Item Energy
+IF ply(6, 0) < 75 AND itemonscreen = 4 THEN cmode = 2        'Get Item Health
+IF ply(6, 1) < 20 THEN cmode = 3                             'Heavy Attack
+IF p0rockets < 4! AND itemonscreen = 1 THEN cmode = 2        'Get Item 2xRockets
+IF p0rockets < 6! AND itemonscreen = 7 THEN cmode = 2        'Get Item 4xRockets
+IF itemonscreen = 2 THEN cmode = 2                           'Get Item Spreadfire
+'IF ply(6, 1) < 5 AND ply(6, 1) < ply(6, 0) THEN cmode = 4    'KEMIKAZII
+IF incclose = 1 AND plotrange > 25 AND incangle < plasmanfo(b, 0) + (PI / 4) AND incangle > plasmanfo(b, 0) - (PI / 4) THEN cmode = 5
+
+
+'LOW HEALTH
+IF ply(6, 0) < 10 OR ply(7, 0) < 20 THEN
+ cmode = 6                                          'Chicken out
+ IF p0rockets < 4! AND itemonscreen = 1 THEN cmode = 2        'Get Item 2xRockets
+ IF p0rockets < 6! AND itemonscreen = 7 THEN cmode = 2        'Get Item 4xRockets
+ IF itemonscreen = 4 THEN cmode = 7                 'Get Item Health !!!PRYO!!!
+ IF incclose = 1 AND incangle < plasmanfo(b, 0) + (PI / 4) AND incangle > plasmanfo(b, 0) - (PI / 4) THEN cmode = 5
+ END IF
+
+
+
+'TARGET SPEC.
+ IF cmode = 1 THEN                                           'Casual Attack
+        cplotdx = 0
+        targetx = ply(1, 1)
+        targety = ply(2, 1)
+        IF ply(8, 0) < 1.5 AND range > 50 THEN ply(8, 0) = ply(8, 0) + .03
+        IF ply(8, 0) > .1 AND range < 15 THEN ply(8, 0) = ply(8, 0) - .03
+        END IF
+ IF cmode = 2 THEN                                           'Get Item
+        cplotdx = 0
+        targetx = 320
+        targety = 240
+        IF ply(8, 0) < 2 AND range > 50 THEN ply(8, 0) = ply(8, 0) + .03
+        IF ply(8, 0) > 1 AND range < 15 THEN ply(8, 0) = ply(8, 0) - .03
+        END IF
+ IF cmode = 3 THEN                                           'Heavy Attack
+        IF ply(7, 0) > 25 AND range > 75 AND ply(0, 0) > target - (PI / 4) AND ply(0, 0) < target + (PI / 4) AND apfire(0) <> 1 THEN
+         apchrg(0) = apchrg(0) + .02
+         ply(7, 0) = ply(7, 0) - 1.5
+         aprate(0) = 100
+         apactive(0) = 1
+        END IF
+        IF apchrg(0) >= .25 OR ply(7, 0) < 25 AND apchrg(0) > 1 THEN
+         apfire(0) = 1
+         END IF
+        cplotdx = 0
+        targetx = ply(1, 1)
+        targety = ply(2, 1)
+        IF ply(8, 0) < 2 AND range > 70 THEN ply(8, 0) = ply(8, 0) + .03
+        IF ply(8, 0) > 1 AND range < 45 THEN ply(8, 0) = ply(8, 0) - .03
+        END IF
+ IF cmode = 4 THEN                                           'KEMIKAZII
+        cplotdx = 0
+        targetx = ply(1, 1)
+        targety = ply(2, 1)
+        IF ply(8, 0) < 2 THEN ply(8, 0) = ply(8, 0) + .03
+        END IF
+ IF cmode = 5 THEN                                           'EVACIVE ACTION
+         IF apfire(0) = 0 THEN
+          apchrg(0) = apchrg(0) + .02
+          ply(7, 0) = ply(7, 0) - 1.5
+          aprate(0) = 100
+          apactive(0) = 1
+          END IF
+         IF fireiminent = 1 AND apchrg(0) > 1 OR apchrg(0) >= 1 OR ply(7, 0) < 1 AND apchrg(0) > 1 THEN
+          apfire(0) = 1
+          END IF
+        cplotdx = (PI / 2)
+        targetx = woutforx
+        targety = woutfory
+         IF ply(8, 0) < 2 THEN ply(8, 0) = ply(8, 0) + .03
+        END IF
+ IF cmode = 6 THEN                                           'RETREAT
+         IF apfire(0) = 0 AND incclose = 1 THEN
+          apchrg(0) = apchrg(0) + .02
+          ply(7, 0) = ply(7, 0) - 1.5
+          aprate(0) = 100
+          apactive(0) = 1
+          END IF
+         IF fireiminent = 1 AND apchrg(0) > .15 OR apchrg(0) >= .15 OR ply(7, 0) < 1 THEN
+          apfire(0) = 1
+          END IF
+        IF range < 150 THEN cplotdx = (PI / 3) * 2 ELSE cplotdx = (PI / 3)
+        targetx = ply(1, 1)
+        targety = ply(2, 1)
+        IF ply(8, 0) < 2 THEN ply(8, 0) = ply(8, 0) + .03
+        END IF
+ IF cmode = 7 THEN                                           'Get Item  !!!PRYO!!!
+         IF apfire(0) = 0 THEN
+          apchrg(0) = apchrg(0) + .02
+          ply(7, 0) = ply(7, 0) - 1.5
+          aprate(0) = 100
+          apactive(0) = 1
+          END IF
+          IF apchrg(0) >= .25 OR ply(7, 0) < 1 AND ply(0, 0) > target - (PI / 4) AND ply(0, 0) < target + (PI / 4) AND apchrg(0) > 1 THEN
+           apfire(0) = 1
+           END IF
+        cplotdx = 0
+        targetx = 320
+        targety = 240
+        IF ply(8, 0) < 2 THEN ply(8, 0) = ply(8, 0) + .03
+        END IF
+
+
+
+
+
+datadump(0) = SQR(((ply(1, 0) - targetx) ^ 2) + ((ply(2, 0) - targety) ^ 2))
+datadump(1) = SQR(((ply(1, 0) - targetx + 560) ^ 2) + ((ply(2, 0) - targety) ^ 2))
+datadump(2) = SQR(((ply(1, 0) - targetx - 560) ^ 2) + ((ply(2, 0) - targety) ^ 2))
+datadump(3) = SQR(((ply(1, 0) - targetx) ^ 2) + ((ply(2, 0) - targety - 440) ^ 2))
+datadump(4) = SQR(((ply(1, 0) - targetx) ^ 2) + ((ply(2, 0) - targety + 440) ^ 2))
+
+ IF datadump(0) < datadump(1) AND datadump(0) < datadump(2) AND datadump(0) < datadump(3) AND datadump(0) < datadump(4) THEN
+  IF ply(1, 0) > targetx THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - targetx)) + PI
+  IF ply(1, 0) < targetx THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - targetx))  '+ PI
+ END IF
+
+ IF datadump(1) < datadump(0) AND datadump(1) < datadump(2) AND datadump(1) < datadump(3) AND datadump(1) < datadump(4) THEN
+  IF ply(1, 0) > targetx - 560 THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - (targetx - 560))) + PI
+  IF ply(1, 0) < targetx - 560 THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - (targetx - 560)))  '+ PI
+ END IF
+
+ IF datadump(2) < datadump(0) AND datadump(2) < datadump(1) AND datadump(2) < datadump(3) AND datadump(2) < datadump(4) THEN
+  IF ply(1, 0) > targetx + 560 THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - (targetx + 560))) + PI
+  IF ply(1, 0) < targetx + 560 THEN target = ATN((ply(2, 0) - targety) / (ply(1, 0) - (targetx + 560)))  '+ PI
+ END IF
+
+ IF datadump(3) < datadump(0) AND datadump(3) < datadump(1) AND datadump(3) < datadump(2) AND datadump(3) < datadump(4) THEN
+  IF ply(1, 0) > targetx THEN target = ATN(((ply(2, 0) - 440) - targety) / (ply(1, 0) - targetx)) + PI
+  IF ply(1, 0) < targetx THEN target = ATN(((ply(2, 0) - 440) - targety) / (ply(1, 0) - targetx))  '+ PI
+ END IF
+
+ IF datadump(4) < datadump(0) AND datadump(4) < datadump(1) AND datadump(4) < datadump(2) AND datadump(4) < datadump(3) THEN
+  IF ply(1, 0) > targetx THEN target = ATN(((ply(2, 0) + 440) - targety) / (ply(1, 0) - targetx)) + PI
+  IF ply(1, 0) < targetx THEN target = ATN(((ply(2, 0) + 440) - targety) / (ply(1, 0) - targetx))  '+ PI
+ END IF
+
+
+ 'LIMITS
+ IF target >= PI THEN target = target - (PI * 2)
+ IF target < -PI THEN target = target + (PI * 2)
+
+
+' sin(a)=sin(b)*3
+' a=asn(sin(b)*3
+' asn=1/SQR(2)*atn(sin(b)*3)
+
+
+' sinb = SIN(alpha) * p1h / 8.571428
+' beta = ATN(sinb / SQR(1 - (sinb * sinb)))
+' svajdx = realdx - beta
+
+
+'f = (target - PI) - ply(0, 1)       ' alpha = -dx - PI - realdx
+'asfdx = 1 / SQR(2) * ATN(SIN(f) * 3)
+'asfx = COS(asfdx) * 50 + ply(1, 0)
+'asfy = SIN(asfdx) * 50 + ply(2, 0)
+'CIRCLE (asfx, asfy), 3, 3
+
+
+
+' TARGET SETTINGS ON A STRATEGIC BASIS
+
+
+' FIRE SETTINGS ON A STRATEGIC BASIS
+
+
+
+ IF ply(0, 0) > target - (PI / 8) AND ply(0, 0) < target + (PI / 8) AND cmode = 3 THEN IF range < 90 THEN lazeract(0) = 1: IF range < 200 AND range > 100 THEN CALL initshot(0)
+ IF ply(0, 0) > target - (PI / 16) AND ply(0, 0) < target + (PI / 16) AND cmode <> 3 THEN IF range < 90 THEN lazeract(0) = 1: IF range < 200 AND range > 100 THEN CALL initshot(0)
+
+ IF ply(0, 0) > target - (PI / 8) AND ply(0, 0) < target + (PI / 8) AND range < 150 AND angtothr > ply(0, 1) - (PI / 8) AND angtothr < ply(0, 1) + (PI / 8) THEN
+  IF ply(3, 0) <> 2 OR ply(3, 0) = 2 AND ply(10, 0) > 0 THEN
+   IF ply(4, 0) = 0 THEN ply(4, 0) = 100: ply(5, 0) = 10: CALL initmissile(0, 0)
+   IF ply(5, 0) = 0 THEN ply(5, 0) = 100: CALL initmissile(0, 1)
+  END IF
+ END IF
+ IF ply(0, 0) > target - (PI / 8) AND ply(0, 0) < target + (PI / 8) AND range < 150 AND angtothr > ply(0, 1) - PI - (PI / 8) AND angtothr < ply(0, 1) - PI + (PI / 8) THEN
+  IF ply(3, 0) <> 2 OR ply(3, 0) = 2 AND ply(10, 0) > 0 THEN
+   IF ply(4, 0) = 0 THEN ply(4, 0) = 100: ply(5, 0) = 10: CALL initmissile(0, 0)
+   IF ply(5, 0) = 0 THEN ply(5, 0) = 100: CALL initmissile(0, 1)
+  END IF
+ END IF
+ IF ply(0, 0) > target - (PI / 6) AND ply(0, 0) < target + (PI / 6) AND range < 75 THEN
+  IF ply(3, 0) <> 2 OR ply(3, 0) = 2 AND ply(10, 0) > 0 THEN
+   IF ply(4, 0) = 0 THEN ply(4, 0) = 100: ply(5, 0) = 10: CALL initmissile(0, 0)
+   IF ply(5, 0) = 0 THEN ply(5, 0) = 100: CALL initmissile(0, 1)
+  END IF
+ END IF
+
+
+
+'GUIDENCE
+ IF ply(0, 0) > (target + cplotdx) AND ply(0, 0) < target + PI THEN ply(0, 0) = ply(0, 0) - (PI / 32)
+ IF ply(0, 0) < (target + cplotdx) AND ply(0, 0) > target - PI THEN ply(0, 0) = ply(0, 0) + (PI / 32)
+ IF ply(0, 0) > (target + cplotdx) + (PI * 2) AND ply(0, 0) < target + (PI * 3) THEN ply(0, 0) = ply(0, 0) - (PI / 32)
+ IF ply(0, 0) < (target + cplotdx) + (PI * 2) AND ply(0, 0) > target + PI THEN ply(0, 0) = ply(0, 0) + (PI / 32)
+ IF ply(0, 0) > (target + cplotdx) - (PI * 2) AND ply(0, 0) < target - PI THEN ply(0, 0) = ply(0, 0) - (PI / 32)
+ IF ply(0, 0) < (target + cplotdx) - (PI * 2) AND ply(0, 0) > target - (PI * 3) THEN ply(0, 0) = ply(0, 0) + (PI / 32)
+
+END SUB
+
+SUB control
+'MOUSE
+nx = x% - ox%
+ny = y% - oy%
+
+turret1dx = turret1dx + nx / 200
+
+IF w6673 < 16 THEN w6673 = w6673 + 1
+IF w6673 > 15 AND l% = 1 THEN CALL initturretfire(0): w6673 = 0
+IF r% = 1 THEN firemiss(1) = 1 ELSE firemiss(1) = 0
+IF m% = 1 THEN CALL initshot(1)
+
+
+'KEYBOARD
+kb = INP(&H60)  'keyb
+a$ = INKEY$
+nul$ = CHR$(0)
+IF kb = 16 THEN fireweap(0) = 1                 'q
+IF kb = 16 + 128 THEN fireweap(0) = 0           'not q
+IF kb = 17 THEN acc(0) = 1: brake(0) = 0        'w
+IF kb = 17 + 128 THEN acc(0) = 0                'not w
+IF kb = 30 THEN left(0) = 1: right(0) = 0       'a
+IF kb = 30 + 128 THEN left(0) = 0               'not a
+IF kb = 31 THEN brake(0) = 1: acc(0) = 0        's
+IF kb = 31 + 128 THEN brake(0) = 0              'not s
+IF kb = 32 THEN right(0) = 1: left(0) = 0       'd
+IF kb = 32 + 128 THEN right(0) = 0              'not d
+IF kb = 41 THEN firemiss(0) = 1                 'paragraf
+IF kb = 41 + 128 THEN firemiss(0) = 0           'not paragraf
+
+IF kb = 72 THEN acc(1) = 1: brake(1) = 0        'up
+IF kb = 72 + 128 THEN acc(1) = 0                'not up
+IF kb = 73 THEN IF apfire(1) = 0 AND apchrg(1) < 1 THEN ply(7, 1) = ply(7, 1) - 1.5: apchrg(1) = apchrg(1) + .02: aprate(1) = 100: apactive(1) = 1: IF ply(7, 1) < 0 THEN apfire(1) = 1'PgUp
+IF kb = 73 + 128 THEN IF apchrg(1) > 0 THEN apfire(1) = 1           'not PgUp
+IF kb = 75 THEN left(1) = 1: right(1) = 0       'left
+IF kb = 75 + 128 THEN left(1) = 0               'not left
+IF kb = 77 THEN right(1) = 1: left(1) = 0       'right
+IF kb = 77 + 128 THEN right(1) = 0              'not right
+IF kb = 80 THEN brake(1) = 1: acc(1) = 0        'down
+IF kb = 80 + 128 THEN brake(1) = 0              'not down
+IF kb = 82 THEN fireweap(1) = 1                 'ins
+IF kb = 82 + 128 THEN fireweap(1) = 0           'not ins
+IF kb = 83 THEN firemiss(1) = 1                 'del
+IF kb = 83 + 128 THEN firemiss(1) = 0           'not del
+FOR snubb = 0 TO 1
+IF left(snubb) = 1 THEN ply(0, snubb) = ply(0, snubb) - PI / 32
+IF right(snubb) = 1 THEN ply(0, snubb) = ply(0, snubb) + PI / 32
+IF acc(snubb) = 1 THEN IF ply(8, snubb) < 2 THEN ply(8, snubb) = ply(8, snubb) + .03
+IF brake(snubb) = 1 THEN IF ply(8, snubb) > 0 THEN ply(8, snubb) = ply(8, snubb) - .03
+IF fireweap(snubb) = 1 AND ply(9, snubb) = 0 THEN CALL initshot(snubb)
+IF fireweap(snubb) = 0 AND ply(9, snubb) = 1 THEN laztemp = 2
+IF fireweap(snubb) = 1 THEN
+ IF ply(9, snubb) = 0 THEN CALL initshot(snubb)
+ IF ply(9, snubb) = 1 AND ply(7, snubb) > 0 THEN lazeract(snubb) = 1
+END IF
+IF apchrg(snubb) > 1 THEN apchrg(snubb) = 1
+NEXT snubb
+IF firemiss(0) = 1 THEN
+ IF ply(3, 0) <> 2 OR ply(3, 0) = 2 AND ply(10, 0) > 0 THEN
+ IF ply(4, 0) = 0 THEN ply(4, 0) = 100: ply(5, 0) = 10: CALL initmissile(0, 0): p0rockets = p0rockets - 1
+ IF ply(5, 0) = 0 THEN ply(5, 0) = 100: CALL initmissile(0, 1): p0rockets = p0rockets - 1
+ END IF
+ END IF
+IF firemiss(1) = 1 THEN
+IF ply(3, 1) <> 2 OR ply(3, 1) = 2 AND ply(10, 1) > 0 THEN
+ IF ply(4, 1) = 0 THEN ply(4, 1) = 100: ply(5, 1) = 10: CALL initmissile(1, 0): p1rockets = p1rockets - 1
+ IF ply(5, 1) = 0 THEN ply(5, 1) = 100: CALL initmissile(1, 1): p1rockets = p1rockets - 1
+ END IF
+END IF
+
+SELECT CASE a$
+
+CASE "<": ply(3, 0) = ply(3, 0) + 1
+CASE nul$ + CHR$(71): ply(3, 1) = ply(3, 1) - 1
+CASE nul$ + CHR$(79): ply(3, 1) = ply(3, 1) + 1
+CASE "5": CALL badaboom(0): CALL badaboom(1)
+CASE "6": ply(7, 0) = 100
+CASE "e": IF ply(9, 0) = 1 THEN ply(9, 0) = 0:  lazeract(0) = 0: laztemp = 2:  ELSE ply(9, 0) = 1
+CASE "x": spmor(0) = 1:
+END SELECT
+END SUB
+
+SUB delship
+
+PUT (ply(1, 0) - 10, ply(2, 0) - 10), black, PSET
+PUT (ply(1, 1) - 10, ply(2, 1) - 10), black, PSET
+
+END SUB
+
+SUB diskinit
+
+ a = 0
+ b = 0
+ OPEN "ship01.shp" FOR INPUT AS #1
+ 
+  DO
+   INPUT #1, b
+   shp(a, 0) = b
+   a = a + 1
+  LOOP UNTIL a > 8
+
+  a = 0
+  DO
+   INPUT #1, b
+   shp(a, 1) = b
+   a = a + 1
+  LOOP UNTIL a > 8
+ 
+ CLOSE #1
+ a = 0
+ b = 0
+
+
+ a = 0
+ b = 0
+ OPEN "missile1" FOR INPUT AS #1
+
+  DO
+   INPUT #1, b
+   misraw(a, 0) = b
+   a = a + 1
+  LOOP UNTIL a > 6
+
+  a = 0
+  DO
+   INPUT #1, b
+   misraw(a, 1) = b
+   a = a + 1
+  LOOP UNTIL a > 6
+
+ CLOSE #1
+ a = 0
+ b = 0
+
+
+
+END SUB
+
+SUB drawship
+
+IF ply(0, 0) - PI > 0 THEN b = 0
+DO
+' PLAYER 0
+IF ply(0, 0) + PI > (PI / 16) * a - (PI / 32) THEN b = a
+a = a + 1
+
+LOOP UNTIL a > 32
+a = 0
+
+ PSET (sps(0, 0, b) + ply(1, 0), sps(0, 1, b) + ply(2, 0)), 2
+
+  a = 0
+  DO
+   a = a + 1
+   LINE -(sps(a, 0, b) + ply(1, 0), sps(a, 1, b) + ply(2, 0)), 2
+  LOOP UNTIL a > 7
+  a = 0
+
+ LINE -(sps(0, 0, b) + ply(1, 0), sps(0, 1, b) + ply(2, 0)), 2
+
+
+IF ply(0, 1) - PI > 0 THEN b = 0
+DO
+' PLAYER 1
+IF ply(0, 1) + PI > (PI / 16) * a - (PI / 32) THEN b = a
+a = a + 1
+
+LOOP UNTIL a > 32
+a = 0
+
+ PSET (sps(0, 0, b) + ply(1, 1), sps(0, 1, b) + ply(2, 1)), 10
+
+  a = 0
+  DO
+   a = a + 1
+   LINE -(sps(a, 0, b) + ply(1, 1), sps(a, 1, b) + ply(2, 1)), 10
+  LOOP UNTIL a > 7
+  a = 0
+
+ LINE -(sps(0, 0, b) + ply(1, 1), sps(0, 1, b) + ply(2, 1)), 10
+
+END SUB
+
+SUB drawsprite
+itemonscreenframe = itemonscreenframe + 1
+IF itemonscreenframe > 3 THEN itemonscreenframe = 0
+IF itemonscreen = 1 THEN PUT (itemonscreenx, itemonscreeny), rocket2x(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 2 THEN PUT (itemonscreenx, itemonscreeny), spreadf(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 3 THEN PUT (itemonscreenx, itemonscreeny), radiog2x(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 4 THEN PUT (itemonscreenx, itemonscreeny), medipack(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 5 THEN PUT (itemonscreenx, itemonscreeny), nrgypack(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 6 THEN PUT (itemonscreenx, itemonscreeny), weaplazr(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 7 THEN PUT (itemonscreenx, itemonscreeny), rocket4x(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 8 THEN PUT (itemonscreenx, itemonscreeny), seeker4x(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 9 THEN PUT (itemonscreenx, itemonscreeny), radiog4x(0, 0, itemonscreenframe), PSET
+IF itemonscreen = 10 THEN PUT (itemonscreenx, itemonscreeny), lsab(0, 0, itemonscreenframe), PSET
+END SUB
+
+SUB events
+
+IF ply(6, 0) <= 0 THEN
+ply(6, 0) = 0
+CALL statusbar
+IF grphcs$ = "low" THEN CALL badaboom(0)
+IF grphcs$ = "high" THEN CALL badaboomhigh(0)
+DO: LOOP UNTIL INKEY$ = CHR$(27): END
+END IF
+
+IF ply(6, 1) <= 0 THEN
+ply(6, 1) = 0
+CALL statusbar
+IF grphcs$ = "low" THEN CALL badaboom(1)
+IF grphcs$ = "high" THEN CALL badaboomhigh(1)
+DO: LOOP UNTIL INKEY$ = CHR$(27): END
+END IF
+
+'STATUS BAR
+w1 = w1 + 1
+IF w1 > 5 THEN
+ w1 = 0
+ CALL statusbar
+END IF
+
+'ON BATTLEFIELD INFO
+w2 = w2 + 1
+IF itemonscreen < 11 AND w2 > 3 THEN
+ w2 = 0
+ CALL drawsprite
+END IF
+
+IF itemonscreen <> 0 AND ply(1, 1) > itemonscreenx - 15 AND ply(2, 1) > itemonscreeny - 15 AND ply(1, 1) < itemonscreenx + 30 AND ply(2, 1) < itemonscreeny + 30 THEN
+respawn = 0
+                                     
+IF itemonscreen = 1 THEN p1rockets = p1rockets + 2
+IF itemonscreen = 2 THEN spread(1) = 1: shsrate(1) = -2
+IF itemonscreen = 3 THEN p1radiogs = p1radiogs + 2
+IF itemonscreen = 4 THEN ply(6, 1) = ply(6, 1) + 25
+IF itemonscreen = 5 THEN ply(7, 1) = ply(7, 1) + 50
+IF itemonscreen = 6 THEN plyweap(1, 1) = 1: ply(7, 1) = ply(7, 1) + 10
+IF itemonscreen = 7 THEN p1rockets = p1rockets + 4
+IF itemonscreen = 10 THEN PLAY "MBo2t110l4cccl8<g+.>l16d+l4cl8<g+.>l16d+l2cl4gggl8g+.l16d+l4<bl8g+.>l16d+l2c": CALL alfa("Luke, it is your destiny...", 200, 470, 0, 15, 0)
+IF ply(6, 1) > 100 THEN ply(6, 1) = 100
+IF ply(7, 1) > 100 THEN ply(7, 1) = 100
+itemonscreen = 0
+PUT (itemonscreenx, itemonscreeny), black, PSET
+END IF
+
+IF itemonscreen <> 0 AND ply(1, 0) > itemonscreenx - 15 AND ply(2, 0) > itemonscreeny - 15 AND ply(1, 0) < itemonscreenx + 30 AND ply(2, 0) < itemonscreeny + 30 THEN
+respawn = 0
+IF itemonscreen = 1 THEN p0rockets = p0rockets + 2
+IF itemonscreen = 2 THEN spread(0) = 1: shsrate(0) = -2
+IF itemonscreen = 3 THEN p0radiogs = p0radiogs + 2
+IF itemonscreen = 4 THEN ply(6, 0) = ply(6, 0) + 25
+IF itemonscreen = 5 THEN ply(7, 0) = ply(7, 0) + 50
+IF itemonscreen = 6 THEN plyweap(1, 0) = 1: ply(7, 0) = ply(7, 0) + 10
+IF itemonscreen = 7 THEN p0rockets = p0rockets + 4
+IF itemonscreen = 10 THEN PLAY "MBo2t110l4cccl8<g+.>l16d+l4cl8<g+.>l16d+l2cl4gggl8g+.l16d+l4<bl8g+.>l16d+l2c": CALL alfa("Luke, it is your destiny...", 200, 470, 0, 15, 0)
+
+IF ply(6, 0) > 100 THEN ply(6, 0) = 100
+IF ply(7, 0) > 100 THEN ply(7, 0) = 100
+itemonscreen = 0
+PUT (itemonscreenx, itemonscreeny), black, PSET
+END IF
+          
+
+
+CALL palettechange
+
+
+END SUB
+
+SUB INIT
+stardelay(0) = 1
+sprad(0) = 30
+turret1dx = -PI * 1.5
+'PLAYER 0 INIT
+'ply(0, 0) = PI + PI / 3
+ply(1, 0) = 170
+ply(2, 0) = 340
+ply(3, 0) = 1
+ply(4, 0) = 0
+ply(5, 0) = 0
+ply(6, 0) = 100
+ply(7, 0) = 100
+ply(8, 0) = 0
+ply(9, 0) = 0
+
+'PLAYER 1 INIT
+'ply(0, 1) = PI / 3
+ply(1, 1) = 460
+ply(2, 1) = 140
+ply(3, 1) = 1
+ply(4, 1) = 0
+ply(5, 1) = 0
+ply(6, 1) = 100
+ply(7, 1) = 100
+ply(8, 1) = 0
+ply(9, 1) = 0
+
+CALL loadsprites
+CALL diskinit
+CALL renderships
+
+maxshots = 30
+
+'LINE (0, 0)-(639, 479), 9, B
+'LINE (41, 0)-(41, 479), 8
+LINE (599, 0)-(599, 479), 2
+'LINE (42, 1)-(598, 478), 1, B
+'LINE (1, 1)-(40, 478), 7, BF
+'LINE (1, 1)-(40, 478), 1, B
+'LINE (600, 1)-(638, 478), 7, BF
+'LINE (600, 1)-(638, 478), 1, B
+
+'LINE (3, 15)-(38, 78), 15, B
+'LINE (30, 15)-(30, 78), 15
+
+LINE (601, 15)-(636, 78), 15, B
+LINE (628, 15)-(628, 78), 15
+
+VIEW SCREEN (43, 2)-(597, 477)
+'CALL mousevisible(0)
+
+
+' Configuration Readings
+
+OPEN "config.cfg" FOR INPUT AS #1
+ INPUT #1, grphcs$
+
+CLOSE #1
+
+'CALL mouseposition(y%, x%, 0)
+'CALL mousescroll(l%, m%, r%)
+p1rockets = 10
+END SUB
+
+SUB initmissile (a, b)
+
+ famn = 0
+
+ DO
+
+  IF missiles(famn, 3) = 0 THEN
+  
+  IF b = 0 THEN
+   missiles(famn, 0) = ply(0, a) - .02                          'DX
+   missiles(famn, 1) = COS(ply(0, a) + PI / 3) * 7 + ply(1, a)  'X
+   missiles(famn, 2) = SIN(ply(0, a) + PI / 3) * 7 + ply(2, a)  'Y
+  END IF
+  IF b = 1 THEN
+   missiles(famn, 0) = ply(0, a) + .02                          'DX
+   missiles(famn, 1) = COS(ply(0, a) - PI / 3) * 7 + ply(1, a)  'X
+   missiles(famn, 2) = SIN(ply(0, a) - PI / 3) * 7 + ply(2, a)  'Y
+  END IF
+   missiles(famn, 3) = 1                                        'TIME UNITS EXISTED
+   missiles(famn, 4) = ply(8, a)                                'START SPEED
+   missiles(famn, 5) = ply(3, a)                                'TYPE
+  
+   IF a = 1 THEN a = 0: GOTO 33
+   IF a = 0 THEN a = 1: GOTO 33
+33
+   missiles(famn, 6) = a                                        'Who's it aimed for
+ 
+  END IF
+  famn = famn + 1
+ LOOP UNTIL famn > 7 OR missiles(famn - 1, 3) = 1
+
+ CALL MISSILE
+
+END SUB
+
+SUB initshot (pl)
+a = 0
+ DO
+IF shsrate(pl) < 1 THEN EXIT DO
+ IF shs(a, pl) = 0 AND spread(pl) = 0 THEN
+  shs(a, pl) = 1
+  shsdx(a, pl) = ply(0, pl) + (RND / 20) - .05
+  shsra(a, pl) = 0
+  shspos(a, 0, pl) = ply(1, pl) + COS(ply(0, pl)) * 10
+  shspos(a, 1, pl) = ply(2, pl) + SIN(ply(0, pl)) * 10
+  shsspeed(a, pl) = 3 + ply(8, pl)
+  shsrate(pl) = 0
+ EXIT DO
+ END IF
+ IF spread(pl) = 1 AND shs(a, pl) = 0 AND shs(a + 1, pl) = 0 AND shs(a + 2, pl) = 0 THEN
+  shs(a, pl) = 1
+  shs(a + 1, pl) = 1
+  shs(a + 2, pl) = 1
+  shsdx(a, pl) = ply(0, pl)
+  shsdx(a + 1, pl) = ply(0, pl) + PI / 40
+  shsdx(a + 2, pl) = ply(0, pl) - PI / 40
+  shsrate(pl) = -1
+  shsra(a, pl) = 0
+  shsra(a + 1, pl) = 0
+  shsra(a + 2, pl) = 0
+  shspos(a, 0, pl) = ply(1, pl) + COS(ply(0, pl)) * 10
+  shspos(a + 1, 0, pl) = ply(1, pl) + COS(ply(0, pl)) * 10
+  shspos(a + 2, 0, pl) = ply(1, pl) + COS(ply(0, pl)) * 10
+  shspos(a, 1, pl) = ply(2, pl) + SIN(ply(0, pl)) * 10
+  shspos(a + 1, 1, pl) = ply(2, pl) + SIN(ply(0, pl)) * 10
+  shspos(a + 2, 1, pl) = ply(2, pl) + SIN(ply(0, pl)) * 10
+  shsspeed(a, pl) = 3 + ply(8, pl) * 1.1
+  shsspeed(a + 1, pl) = 3 + ply(8, pl)
+  shsspeed(a + 2, pl) = 3 + ply(8, pl)
+ EXIT DO
+ END IF
+ a = a + 1
+ LOOP UNTIL a = 10: a = 0
+END SUB
+
+SUB initturretfire (a)
+
+ IF a = 0 THEN
+  DO
+ 
+   IF plasmanfo(b, 3) = 0 THEN
+    indx = COS(turret1dx + ply(0, 1)) * 12 + (COS(PI + ply(0, 1)) * 3 + ply(1, 1))
+    indy = SIN(turret1dx + ply(0, 1)) * 12 + (SIN(PI + ply(0, 1)) * 3 + ply(2, 1))
+    indx1 = COS(turret1dx + ply(0, 1) + (PI / 9)) * 11 + (COS(PI + ply(0, 1)) * 3 + ply(1, 1))
+    indy1 = SIN(turret1dx + ply(0, 1) + (PI / 9)) * 11 + (SIN(PI + ply(0, 1)) * 3 + ply(2, 1))
+    indx2 = COS(turret1dx + ply(0, 1) - (PI / 9)) * 11 + (COS(PI + ply(0, 1)) * 3 + ply(1, 1))
+    indy2 = SIN(turret1dx + ply(0, 1) - (PI / 9)) * 11 + (SIN(PI + ply(0, 1)) * 3 + ply(2, 1))
+    plasmanfo(b, 0) = ply(0, 1) + turret1dx
+    plasmanfo(b, 1) = ply(1, 1)
+    plasmanfo(b, 2) = ply(2, 1)
+    plasmanfo(b, 3) = 1
+    plasmanfo(b, 4) = 0
+    ready = 1
+   END IF
+  b = b + 1
+  LOOP UNTIL b > 15 OR ready = 1
+ ready = 0
+ END IF
+
+ IF a = 1 THEN
+  b = 15
+  DO
+
+   IF plasmanfo(b, 3) = 0 THEN
+    plasmanfo(b, 0) = ply(0, 0) + turret0dx
+    plasmanfo(b, 1) = ply(1, 0)
+    plasmanfo(b, 2) = ply(2, 0)
+    plasmanfo(b, 3) = 1
+    plasmanfo(b, 4) = 1
+    ready = 1
+   END IF
+   b = b + 1
+  LOOP UNTIL b > 30 OR ready = 1
+ ready = 0
+ END IF
+
+
+
+END SUB
+
+SUB lazer
+IF laztemp = 1 AND ply(7, 0) <= 0 THEN LINE (lazerpos(2, 0), lazerpos(3, 0))-(lazerpos(0, 0), lazerpos(1, 0)), 0: laztemp = 0
+IF laztemp = 2 THEN LINE (lazerpos(2, 0), lazerpos(3, 0))-(lazerpos(0, 0), lazerpos(1, 0)), 0: laztemp = 0
+
+IF lazeract(0) = 1 AND ply(7, 0) > 4 THEN
+ ply(7, 0) = ply(7, 0) - 4
+LINE (lazerpos(2, 0), lazerpos(3, 0))-(lazerpos(0, 0), lazerpos(1, 0)), 0
+
+lazerpos(2, 0) = ply(1, 0) + COS(ply(0, 0)) * 9
+lazerpos(3, 0) = ply(2, 0) + SIN(ply(0, 0)) * 9
+
+lazerpos(0, 0) = COS(ply(0, 0)) * 65 + lazerpos(2, 0)
+lazerpos(1, 0) = SIN(ply(0, 0)) * 65 + lazerpos(3, 0)
+a = CINT(RND * 4)
+IF a = 0 THEN a = 4
+IF a = 1 THEN a = 12
+IF a = 2 THEN a = 12
+IF a = 3 THEN a = 12
+IF a = 4 THEN a = 4
+LINE (lazerpos(2, 0), lazerpos(3, 0))-(lazerpos(0, 0), lazerpos(1, 0)), a
+a = 0
+ laztemp = 1
+ motdx = ATN((ply(2, 0) - ply(2, 1)) / (ply(1, 0) - (ply(1, 1))))
+ IF ply(1, 0) > ply(1, 1) THEN motdx = motdx + PI
+ IF motdx > PI THEN motdx = motdx - PI * 2
+ IF motdx < -PI THEN motdx = motdx + PI * 2
+
+ range = SQR((ply(2, 0) - ply(2, 1)) ^ 2 + (ply(1, 0) - ply(1, 1)) ^ 2)
+ IF ply(0, 0) > motdx - .15 AND ply(0, 0) < motdx + .15 AND range < 75 THEN
+  ply(6, 1) = ply(6, 1) - 3
+ END IF
+lazeract(0) = 0
+laztemp = 2 'DUH:::::::: JOAKIM KAN VARA PSYCO!
+END IF
+IF ply(7, 0) <= 0 THEN ply(7, 0) = 0: lazeract(0) = 0: ply(9, 0) = 0: laztemp = 2
+END SUB
+
+SUB loadsprites
+op = 0
+DO
+IF op = 0 THEN OPEN "nox\rocket2x.nox" FOR INPUT AS #1
+IF op = 4 THEN CLOSE #1: OPEN "nox\wea_sprd.nox" FOR INPUT AS #1
+IF op = 8 THEN CLOSE #1: OPEN "nox\mines3x.nox" FOR INPUT AS #1
+IF op = 12 THEN CLOSE #1: OPEN "nox\rocketsb.nox" FOR INPUT AS #1
+IF op = 16 THEN CLOSE #1: OPEN "nox\seekersb.nox" FOR INPUT AS #1
+IF op = 20 THEN CLOSE #1: OPEN "nox\mingatsb.nox" FOR INPUT AS #1
+IF op = 24 THEN CLOSE #1: OPEN "nox\ref_medi.nox" FOR INPUT AS #1
+IF op = 28 THEN CLOSE #1: OPEN "nox\ref_jolt.nox" FOR INPUT AS #1
+IF op = 32 THEN CLOSE #1: OPEN "nox\wea_lazr.nox" FOR INPUT AS #1
+IF op = 36 THEN CLOSE #1: OPEN "nox\hum_lsab.nox" FOR INPUT AS #1
+IF op = 40 THEN CLOSE #1: OPEN "nox\rocket4x.nox" FOR INPUT AS #1
+IF op = 44 THEN CLOSE #1: OPEN "nox\seeker4x.nox" FOR INPUT AS #1
+IF op = 48 THEN CLOSE #1: OPEN "nox\radiog4x.nox" FOR INPUT AS #1
+ x = 0
+ y = 0
+ INPUT #1, a
+
+ DO
+  INPUT #1, a
+  PSET (x, y), a
+  x = x + 1
+  IF x > 14 THEN x = 0: y = y + 1
+ LOOP UNTIL y > 14
+
+ IF op = 0 THEN GET (0, 0)-(15, 15), rocket2x(0, 0, 0)
+ IF op = 1 THEN GET (0, 0)-(15, 15), rocket2x(0, 0, 1)
+ IF op = 2 THEN GET (0, 0)-(15, 15), rocket2x(0, 0, 2)
+ IF op = 3 THEN GET (0, 0)-(15, 15), rocket2x(0, 0, 3)
+
+ IF op = 4 THEN GET (0, 0)-(15, 15), spreadf(0, 0, 0)
+ IF op = 5 THEN GET (0, 0)-(15, 15), spreadf(0, 0, 1)
+ IF op = 6 THEN GET (0, 0)-(15, 15), spreadf(0, 0, 2)
+ IF op = 7 THEN GET (0, 0)-(15, 15), spreadf(0, 0, 3)
+
+ IF op = 8 THEN GET (0, 0)-(15, 15), radiog2x(0, 0, 0)
+ IF op = 9 THEN GET (0, 0)-(15, 15), radiog2x(0, 0, 1)
+ IF op = 10 THEN GET (0, 0)-(15, 15), radiog2x(0, 0, 2)
+ IF op = 11 THEN GET (0, 0)-(15, 15), radiog2x(0, 0, 3)
+
+ IF op = 12 THEN GET (0, 0)-(15, 15), rocketsb(0, 0, 0)
+ IF op = 13 THEN GET (0, 0)-(15, 15), rocketsb(0, 0, 1)
+ IF op = 14 THEN GET (0, 0)-(15, 15), rocketsb(0, 0, 2)
+ IF op = 15 THEN GET (0, 0)-(15, 15), rocketsb(0, 0, 3)
+
+ IF op = 16 THEN GET (0, 0)-(15, 15), seekersb(0, 0, 0)
+ IF op = 17 THEN GET (0, 0)-(15, 15), seekersb(0, 0, 1)
+ IF op = 18 THEN GET (0, 0)-(15, 15), seekersb(0, 0, 2)
+ IF op = 19 THEN GET (0, 0)-(15, 15), seekersb(0, 0, 3)
+
+ IF op = 20 THEN GET (0, 0)-(15, 15), radiogsb(0, 0, 0)
+ IF op = 21 THEN GET (0, 0)-(15, 15), radiogsb(0, 0, 1)
+ IF op = 22 THEN GET (0, 0)-(15, 15), radiogsb(0, 0, 2)
+ IF op = 23 THEN GET (0, 0)-(15, 15), radiogsb(0, 0, 3)
+
+ IF op = 24 THEN GET (0, 0)-(15, 15), medipack(0, 0, 0)
+ IF op = 25 THEN GET (0, 0)-(15, 15), medipack(0, 0, 1)
+ IF op = 26 THEN GET (0, 0)-(15, 15), medipack(0, 0, 2)
+ IF op = 27 THEN GET (0, 0)-(15, 15), medipack(0, 0, 3)
+
+ IF op = 28 THEN GET (0, 0)-(15, 15), nrgypack(0, 0, 0)
+ IF op = 29 THEN GET (0, 0)-(15, 15), nrgypack(0, 0, 1)
+ IF op = 30 THEN GET (0, 0)-(15, 15), nrgypack(0, 0, 2)
+ IF op = 31 THEN GET (0, 0)-(15, 15), nrgypack(0, 0, 3)
+
+ IF op = 32 THEN GET (0, 0)-(15, 15), weaplazr(0, 0, 0)
+ IF op = 33 THEN GET (0, 0)-(15, 15), weaplazr(0, 0, 1)
+ IF op = 34 THEN GET (0, 0)-(15, 15), weaplazr(0, 0, 2)
+ IF op = 35 THEN GET (0, 0)-(15, 15), weaplazr(0, 0, 3)
+
+ IF op = 36 THEN GET (0, 0)-(15, 15), lsab(0, 0, 0)
+ IF op = 37 THEN GET (0, 0)-(15, 15), lsab(0, 0, 1)
+ IF op = 38 THEN GET (0, 0)-(15, 15), lsab(0, 0, 2)
+ IF op = 39 THEN GET (0, 0)-(15, 15), lsab(0, 0, 3)
+
+ IF op = 40 THEN GET (0, 0)-(15, 15), rocket4x(0, 0, 0)
+ IF op = 41 THEN GET (0, 0)-(15, 15), rocket4x(0, 0, 1)
+ IF op = 42 THEN GET (0, 0)-(15, 15), rocket4x(0, 0, 2)
+ IF op = 43 THEN GET (0, 0)-(15, 15), rocket4x(0, 0, 3)
+
+ IF op = 44 THEN GET (0, 0)-(15, 15), seeker4x(0, 0, 0)
+ IF op = 45 THEN GET (0, 0)-(15, 15), seeker4x(0, 0, 1)
+ IF op = 46 THEN GET (0, 0)-(15, 15), seeker4x(0, 0, 2)
+ IF op = 47 THEN GET (0, 0)-(15, 15), seeker4x(0, 0, 3)
+
+ IF op = 48 THEN GET (0, 0)-(15, 15), radiog4x(0, 0, 0)
+ IF op = 49 THEN GET (0, 0)-(15, 15), radiog4x(0, 0, 1)
+ IF op = 50 THEN GET (0, 0)-(15, 15), radiog4x(0, 0, 2)
+ IF op = 51 THEN GET (0, 0)-(15, 15), radiog4x(0, 0, 3)
+
+
+ op = op + 1
+
+ LOOP UNTIL op = 52
+
+CLOSE #1
+CLS
+GET (0, 0)-(20, 20), black
+
+END SUB
+
+SUB MISSILE
+
+'s= Current Missile Beeing Checked
+DO
+
+ 'DRAW
+ IF missiles(s, 0) - PI > 0 THEN b = 0
+ DO
+  a = a + 1
+  IF missiles(s, 0) - PI + (PI * 2) > (PI / 16) * a + (PI / 32) THEN b = a
+ LOOP UNTIL a > 32
+ a = 0
+ PSET (mis(0, 0, b) + missiles(s, 1), mis(0, 1, b) + missiles(s, 2)), 0
+ a = 0
+ DO
+  a = a + 1
+  LINE -(mis(a, 0, b) + missiles(s, 1), mis(a, 1, b) + missiles(s, 2)), 0
+ LOOP UNTIL a > 5
+ a = 0
+ LINE -(mis(0, 0, b) + missiles(s, 1), mis(0, 1, b) + missiles(s, 2)), 0
+ a = 0
+ b = 0
+
+  'PROP
+  missiles(s, 1) = COS(missiles(s, 0)) * missiles(s, 4) + missiles(s, 1)
+  missiles(s, 2) = SIN(missiles(s, 0)) * missiles(s, 4) + missiles(s, 2)
+
+'ACCELERATE
+ IF missiles(s, 4) < 6.5 THEN missiles(s, 4) = missiles(s, 4) + (.1 * (missiles(s, 3) / 2))
+
+ 'COMMON
+ IF missiles(s, 5) = 1 OR missiles(s, 5) = 2 OR missiles(s, 5) = 3 THEN
+
+ 'LIMITS
+ IF missiles(s, 3) > 0 THEN
+ IF missiles(s, 1) > 580 THEN missiles(s, 1) = 60
+ IF missiles(s, 1) < 60 THEN missiles(s, 1) = 580
+ IF missiles(s, 2) > 460 THEN missiles(s, 2) = 20
+ IF missiles(s, 2) < 20 THEN missiles(s, 2) = 460
+ END IF
+
+  'TIME
+  missiles(s, 3) = missiles(s, 3) + 1
+
+  IF missiles(s, 3) < 100 THEN
+  'INIT PARTICLES
+  IF missiles(s, 3) = 2 OR missiles(s, 3) = 5 OR missiles(s, 3) = 7 OR missiles(s, 3) = 10 OR missiles(s, 3) = 13 OR missiles(s, 3) = 16 OR missiles(s, 3) = 19 OR missiles(s, 3) = 22 OR missiles(s, 3) = 25 OR missiles(s, 3) = 28 OR missiles(s, 3) =  _
+31 OR missiles(s, 3) = 34 OR missiles(s, 3) = 37 OR missiles(s, 3) = 40 OR missiles(s, 3) = 43 OR missiles(s, 3) = 46 OR missiles(s, 3) = 49 OR missiles(s, 3) = 52 OR missiles(s, 3) = 55 OR missiles(s, 3) = 58 OR missiles(s, 3) = 61 OR missiles(s, 3 _
+) = 64 THEN
+   a = 0: b = 0
+   DO
+    IF particles(a, 3) = 0 THEN
+     particles(a, 0) = missiles(s, 0) + PI + (SIN(unismogdx) * .6) + (RND * .5) - .25
+     particles(a, 1) = missiles(s, 1)
+     particles(a, 2) = missiles(s, 2)
+     particles(a, 3) = 1
+    END IF
+    a = a + 1
+  
+   LOOP UNTIL a > 20 OR particles(a - 1, 3) = 1
+   a = 0: b = 0
+
+  END IF
+
+  IF missiles(s, 3) = 3 OR missiles(s, 3) = 4 OR missiles(s, 3) = 6 OR missiles(s, 3) = 11 OR missiles(s, 3) = 14 OR missiles(s, 3) = 17 OR missiles(s, 3) = 20 OR missiles(s, 3) = 23 OR missiles(s, 3) = 26 OR missiles(s, 3) = 29 OR missiles(s, 3) =  _
+32 OR missiles(s, 3) = 35 OR missiles(s, 3) = 38 OR missiles(s, 3) = 41 OR missiles(s, 3) = 47 OR missiles(s, 3) = 49 OR missiles(s, 3) = 51 OR missiles(s, 3) = 53 OR missiles(s, 3) = 56 OR missiles(s, 3) = 59 OR missiles(s, 3) = 62 OR missiles(s, 3 _
+) = 65 THEN
+   a = 20
+   b = 0
+   DO
+    IF particles(a, 3) = 0 THEN
+     particles(a, 0) = missiles(s, 0) + PI + (SIN(unismogdx) * .6) + (RND * .8) - .4
+     particles(a, 1) = missiles(s, 1)
+     particles(a, 2) = missiles(s, 2)
+     particles(a, 3) = 1
+    END IF
+    a = a + 1
+
+   LOOP UNTIL a > 40 OR particles(a - 1, 3) = 1
+   a = 0: b = 0
+
+END IF
+
+END IF
+
+   'DEATH
+   IF missiles(s, 3) > 175 OR missiles(s, 1) > ply(1, missiles(s, 6)) - 10 AND missiles(s, 1) < ply(1, missiles(s, 6)) + 10 AND missiles(s, 2) > ply(2, missiles(s, 6)) - 10 AND missiles(s, 2) < ply(2, missiles(s, 6)) + 10 THEN
+    grey32 = 16
+    bbcol = 0
+
+    FOR I = 1 TO 150
+    LINE (missiles(s, 1), missiles(s, 2))-((RND * 15) + missiles(s, 1) - 7, (RND * 15) + missiles(s, 2) - 7), 4
+    LINE (missiles(s, 1), missiles(s, 2))-((RND * 12) + missiles(s, 1) - 6, (RND * 12) + missiles(s, 2) - 6), 12
+    LINE (missiles(s, 1), missiles(s, 2))-((RND * 8) + missiles(s, 1) - 4, (RND * 8) + missiles(s, 2) - 4), 14
+    NEXT I
+   
+    IF missiles(s, 1) > ply(1, missiles(s, 6)) - 10 AND missiles(s, 1) < ply(1, missiles(s, 6)) + 10 AND missiles(s, 2) > ply(2, missiles(s, 6)) - 10 AND missiles(s, 2) < ply(2, missiles(s, 6)) + 10 THEN ply(6, missiles(s, 6)) = ply(6, missiles(s, 6 _
+)) - 10
+   
+                                   
+    PUT (missiles(s, 1) - 7, missiles(s, 2) - 7), black, PSET
+    missiles(s, 1) = 0
+    missiles(s, 2) = 0
+    missiles(s, 3) = 0
+    missiles(s, 4) = 0
+    missiles(s, 5) = 0
+   END IF
+
+END IF
+
+'DRAW
+ IF missiles(s, 0) - PI > 0 THEN b = 0
+ DO
+  a = a + 1
+  IF missiles(s, 0) - PI + (PI * 2) > (PI / 16) * a + (PI / 32) THEN b = a
+ LOOP UNTIL a > 32
+ a = 0
+ PSET (mis(0, 0, b) + missiles(s, 1), mis(0, 1, b) + missiles(s, 2)), 15
+ a = 0
+ DO
+  a = a + 1
+  LINE -(mis(a, 0, b) + missiles(s, 1), mis(a, 1, b) + missiles(s, 2)), 15
+ LOOP UNTIL a > 5
+ a = 0
+ LINE -(mis(0, 0, b) + missiles(s, 1), mis(0, 1, b) + missiles(s, 2)), 15
+ a = 0
+ b = 0
+
+ s = s + 1
+ LOOP UNTIL s > 7
+ a = 0: b = 0
+
+  'PARTICLES
+  a = 0: b = 0
+  DO
+
+   PSET (particles(a, 1), particles(a, 2)), 0
+   CIRCLE (particles(a, 1), particles(a, 2)), 1, 0
+
+   IF particles(a, 3) > 0 THEN
+    particles(a, 1) = COS(particles(a, 0)) * .6 + particles(a, 1)
+    particles(a, 2) = SIN(particles(a, 0)) * .6 + particles(a, 2)
+    particles(a, 3) = particles(a, 3) + 1
+    IF particles(a, 3) > 20 THEN PSET (particles(a, 1), particles(a, 2)), 0: particles(a, 1) = 0: particles(a, 2) = 0
+   END IF
+                                                 
+   'FADE SMOKE COLOR
+   IF particles(a, 3) < 19 AND particles(a, 3) > 14 THEN PSET (particles(a, 1), particles(a, 2)), 8: CIRCLE (particles(a, 1), particles(a, 2)), 1, 0
+   IF particles(a, 3) < 15 AND particles(a, 3) > 9 THEN PSET (particles(a, 1), particles(a, 2)), 7: CIRCLE (particles(a, 1), particles(a, 2)), 1, 8
+   IF particles(a, 3) < 10 AND particles(a, 3) > 3 THEN PSET (particles(a, 1), particles(a, 2)), 15: CIRCLE (particles(a, 1), particles(a, 2)), 1, 7
+   IF particles(a, 3) < 4 THEN PSET (particles(a, 1), particles(a, 2)), 14: CIRCLE (particles(a, 1), particles(a, 2)), 1, 12
+ 
+   'KILL SMOKE
+   IF particles(a, 3) > 18 THEN PSET (particles(a, 1), particles(a, 2)), 0: CIRCLE (particles(a, 1), particles(a, 2)), 1, 0: CIRCLE (particles(a, 1), particles(a, 2)), 2, 0: particles(a, 1) = 0: particles(a, 2) = 0
+   IF particles(a, 3) > 20 THEN particles(a, 3) = 0: PSET (particles(a, 1), particles(a, 2)), 0: CIRCLE (particles(a, 1), particles(a, 2)), 1, 0: CIRCLE (particles(a, 1), particles(a, 2)), 2, 0: particles(a, 1) = 0: particles(a, 2) = 0
+
+   a = a + 1
+  LOOP UNTIL a > 40
+  a = 0: b = 0
+
+END SUB
+
+SUB palettechange
+
+blue = COS(undx / 6) * 20 + 42
+green = green - 2
+PALETTE 3, 65536 * INT(blue) + 256 * 0 + 20
+PALETTE 5, 65536 * 0 + 256 * INT(green) + 0
+
+END SUB
+
+FUNCTION pyt (px1, py1, px2, py2)
+pyt = SQR((px1 - px2) ^ 2 + (py1 - py2) ^ 2)
+END FUNCTION
+
+SUB radar
+ VIEW SCREEN (1, 1)-(639, 479)
+
+ IF green < 16 THEN green = 63: LINE (550, 360)-(630, 440), 0, BF: LINE (550, 360)-(630, 440), 2, B
+' LINE (590, 400)-(630, 440), 2, B
+ LINE (550, 360)-(590, 440), 2, B
+ LINE (550, 360)-(630, 400), 2, B
+
+ radx = INT(((ply(1, 0) - 60) / 6.5) + 550)
+ rady = INT(((ply(2, 0) - 20) / 5.5) + 360)
+ PSET (radx, rady), 5
+
+ radx = INT(((ply(1, 1) - 60) / 6.5) + 550)
+ rady = INT(((ply(2, 1) - 20) / 5.5) + 360)
+ PSET (radx, rady), 5
+
+ VIEW SCREEN (43, 2)-(597, 477)
+END SUB
+
+SUB renderships
+
+' SHIP CALC
+
+a = 0
+DO
+
+IF shp(a, 1) < 0 THEN slo(a, 0) = ATN(shp(a, 0) / shp(a, 1)) + PI
+IF shp(a, 1) > 0 THEN slo(a, 0) = ATN(shp(a, 0) / shp(a, 1))
+slo(a, 1) = SQR((shp(a, 0) * shp(a, 0)) + (shp(a, 1) * shp(a, 1)))
+a = a + 1
+
+LOOP UNTIL a > 8
+a = 0: b = 0
+DO
+sps(a, 0, b) = COS(slo(a, 0) + (b * PI / 16)) * (slo(a, 1))
+sps(a, 1, b) = SIN(slo(a, 0) + (b * PI / 16)) * (slo(a, 1))
+
+a = a + 1
+IF a > 8 THEN a = 0: b = b + 1
+
+LOOP UNTIL b > 32
+a = 0
+b = 0
+
+'MISSILE CALC
+a = 0
+DO
+
+IF misraw(a, 1) < 0 THEN misobj(a, 0) = ATN(misraw(a, 0) / misraw(a, 1)) + PI
+IF misraw(a, 1) > 0 THEN misobj(a, 0) = ATN(misraw(a, 0) / misraw(a, 1))
+misobj(a, 1) = SQR((misraw(a, 0) * misraw(a, 0)) + (misraw(a, 1) * misraw(a, 1)))
+a = a + 1
+
+LOOP UNTIL a > 6
+a = 0: b = 0
+DO
+mis(a, 0, b) = COS(misobj(a, 0) + (b * PI / 16)) * (misobj(a, 1))
+mis(a, 1, b) = SIN(misobj(a, 0) + (b * PI / 16)) * (misobj(a, 1))
+
+a = a + 1
+IF a > 6 THEN a = 0: b = b + 1
+
+LOOP UNTIL b > 32
+a = 0
+b = 0
+
+
+END SUB
+
+SUB shots
+FOR b = 0 TO 1
+c = CINT(COS(b * 1.5 * PI))
+FOR a = 0 TO 10
+
+ PSET (shspos(a, 0, b), shspos(a, 1, b)), 0
+ CIRCLE (shspos(a, 0, b), shspos(a, 1, b)), 1, 0
+IF spread(b) = 1 THEN CIRCLE (shspos(a, 0, b), shspos(a, 1, b)), 1, 0
+ IF shspos(a, 0, b) > 580 THEN shspos(a, 0, b) = 60
+ IF shspos(a, 0, b) < 60 THEN shspos(a, 0, b) = 580
+ IF shspos(a, 1, b) > 460 THEN shspos(a, 1, b) = 20
+ IF shspos(a, 1, b) < 20 THEN shspos(a, 1, b) = 460
+
+ shsra(a, b) = shsra(a, b) + 1
+
+'Skott mot player 0 och h1
+ IF shs(a, b) <> 0 THEN
+  IF shspos(a, 1, b) < ply(2, c) + 8 AND shspos(a, 1, b) > ply(2, c) - 8 AND shspos(a, 0, b) < ply(1, c) + 8 AND shspos(a, 0, b) > ply(1, c) - 8 THEN
+  ply(6, c) = ply(6, c) - 5
+  GOSUB dieshot
+  END IF
+ END IF
+
+ IF shsra(a, b) > 50 THEN
+ shs(a, b) = 0: shsra(a, b) = 0
+ PSET (shspos(a, 0, b), shspos(a, 1, b)), 0
+ shspos(a, 0, b) = 0: shspos(a, 1, b) = 0
+ END IF
+ IF shs(a, b) = 1 THEN
+ shspos(a, 0, b) = COS(shsdx(a, b)) * shsspeed(a, b) + shspos(a, 0, b)
+ shspos(a, 1, b) = SIN(shsdx(a, b)) * shsspeed(a, b) + shspos(a, 1, b)
+PSET (shspos(a, 0, b), shspos(a, 1, b)), 15
+CIRCLE (shspos(a, 0, b), shspos(a, 1, b)), 1, 7
+IF spread(b) = 1 THEN PSET (shspos(a, 0, b), shspos(a, 1, b)), 11
+
+IF spread(b) = 1 THEN CIRCLE (shspos(a, 0, b), shspos(a, 1, b)), 1, 9
+
+END IF
+NEXT a
+NEXT b
+a = 0: b = 0
+
+EXIT SUB
+dieshot:
+  shs(a, b) = 0: shsra(a, b) = 0
+  PSET (shspos(a, 0, b), shspos(a, 1, b)), 0
+  shspos(a, 0, b) = 0: shspos(a, 1, b) = 0
+RETURN
+END SUB
+
+SUB statusbar
+ VIEW SCREEN (1, 1)-(639, 479)
+ statframe = statframe + 1
+ IF statframe > 3 THEN statframe = 0
+
+'PLAYER 0
+'LINE (21, 80)-(38, 140), 0, BF
+'
+' CALL alfa(STR$(p0rockets), 20, 86, 0, 15, 0)
+' CALL alfa(STR$(p0seekers), 20, 103, 0, 15, 0)
+' CALL alfa(STR$(p0radiogs), 20, 120, 0, 15, 0)
+'
+'
+' PUT (3, 80), rocketsb(0, 0, statframe), PSET
+' PUT (3, 97), seekersb(0, 0, statframe), PSET
+' PUT (3, 114), radiogsb(0, 0, statframe), PSET
+' IF ply(3, 0) = 1 THEN LINE (3, 79)-(18, 96), 12, B ELSE LINE (3, 79)-(18, 96), 7, B
+' IF ply(3, 0) = 2 THEN LINE (3, 96)-(18, 113), 12, B ELSE LINE (3, 96)-(18, 113), 7, B
+' IF ply(3, 0) = 3 THEN LINE (3, 113)-(18, 128), 12, B ELSE LINE (3, 113)-(18, 128), 7, B
+'
+'IF ply(6, 0) > 0 THEN LINE (4, 77 - 61 / 100 * ply(6, 0))-(29, 77), 12, BF
+' LINE (4, 16)-(29, 77 - 61 / 100 * ply(6, 0)), 0, BF
+'IF ply(6, 0) > 0 THEN LINE (4, 77 - 61 / 100 * ply(6, 0))-(29, 77 - 61 / 100 * ply(6, 0)), 4
+' LINE (31, 77 - 61 / 100 * ply(7, 0))-(37, 77), 9, BF
+' LINE (31, 16)-(37, 77 - 61 / 100 * ply(7, 0)), 0, BF
+' LINE (31, 77 - 61 / 100 * ply(7, 0))-(37, 77 - 61 / 100 * ply(7, 0)), 9
+
+ 'PLAYER 1
+LINE (621, 80)-(637, 140), 0, BF
+               
+CALL alfa(STR$(p1rockets), 20 + 75 * 8, 86, 0, 15, 0)
+CALL alfa(STR$(p1seekers), 20 + 75 * 8, 103, 0, 15, 0)
+CALL alfa(STR$(p1radiogs), 20 + 75 * 8, 120, 0, 15, 0)
+
+
+ PUT (602, 80), rocketsb(0, 0, statframe), PSET
+ PUT (602, 97), seekersb(0, 0, statframe), PSET
+ PUT (602, 114), radiogsb(0, 0, statframe), PSET
+ IF ply(3, 1) = 1 THEN LINE (601, 79)-(617, 96), 12, B ELSE LINE (601, 79)-(617, 96), 7, B
+ IF ply(3, 1) = 2 THEN LINE (601, 96)-(617, 113), 12, B ELSE LINE (601, 96)-(617, 113), 7, B
+ IF ply(3, 1) = 3 THEN LINE (601, 113)-(617, 128), 12, B ELSE LINE (601, 113)-(617, 128), 7, B
+
+
+IF ply(6, 0) > 0 THEN LINE (602, 77 - 61 / 100 * ply(6, 1))-(627, 77), 12, BF
+ LINE (627, 77 - 61 / 100 * ply(6, 1))-(602, 16), 0, BF
+IF ply(6, 0) > 0 THEN LINE (602, 77 - 61 / 100 * ply(6, 1))-(627, 77 - 61 / 100 * ply(6, 1)), 4
+ LINE (629, 77 - 61 / 100 * ply(7, 1))-(635, 77), 9, BF
+ LINE (629, 16)-(635, 77 - 61 / 100 * ply(7, 1)), 0, BF
+ LINE (629, 77 - 61 / 100 * ply(7, 1))-(635, 77 - 61 / 100 * ply(7, 1)), 9
+
+
+'PUT (4, 140), locking(0, 0, 0), PSET
+
+IF ply(3, 0) = 2 AND ply(10, 0) < 1 AND range < 200 THEN ply(10, 0) = 300
+
+IF ply(10, 0) > 1 THEN
+ ply(10, 0) = ply(10, 0) - 10
+ PUT (4, 140), locking(0, 0, statframe), PSET
+END IF
+
+
+'PUT (602, 140), locking(0, 0, 0), PSET
+IF ply(3, 1) = 2 AND ply(10, 1) < 1 AND range < 200 THEN ply(10, 1) = 300
+IF ply(10, 1) > 1 THEN
+ ply(10, 1) = ply(10, 1) - 10
+ PUT (602, 140), locking(0, 0, statframe), PSET
+END IF
+
+ VIEW SCREEN (43, 2)-(597, 477)
+
+END SUB
+
+SUB telespawn
+respawn = respawn + .05
+IF respawn > 10 THEN spmor(0) = 1: respawn = 0
+
+spundx = undx
+IF spmor(0) = 1 THEN spundx = undx * 2
+
+FOR a = 0 TO 5
+IF a > 0 AND spmor(0) = 2 THEN LINE (sppix(a, 0), sppiy(a, 0))-(sppix(a - 1, 0), sppiy(a - 1, 0)), 0
+LINE (sppix(a, 0), sppiy(a, 0))-(sppix(a + 5, 0), sppiy(a + 5, 0)), 0
+NEXT a
+
+LINE (sppix(0, 0), sppiy(0, 0))-(sppix(5, 0), sppiy(5, 0)), 0
+
+IF stardelay(0) < 1 THEN
+ LINE (sppix(0, 0), sppiy(0, 0))-(sppix(2, 0), sppiy(2, 0)), 0
+ LINE -(sppix(4, 0), sppiy(4, 0)), 0
+ LINE -(sppix(1, 0), sppiy(1, 0)), 0
+ LINE -(sppix(3, 0), sppiy(3, 0)), 0
+ LINE -(sppix(0, 0), sppiy(0, 0)), 0
+END IF
+
+IF spmor(0) = 2 THEN
+  IF 290 < ply(1, 0) AND 350 > ply(1, 0) AND 210 < ply(2, 0) AND 270 > ply(2, 0) THEN ply(6, 0) = ply(6, 0) - 3.5
+  IF 290 < ply(1, 1) AND 350 > ply(1, 1) AND 210 < ply(2, 1) AND 270 > ply(2, 1) THEN ply(6, 1) = ply(6, 1) - 3.5
+
+END IF
+stardelay(0) = stardelay(0) + .5
+c = 3
+IF spmor(0) = 1 THEN sprad(0) = sprad(0) * .8
+IF sprad(0) < 1 THEN spmor(0) = 2
+
+IF sprad(0) > 30 THEN sprad(0) = 30: spmor(0) = 0: putitem(0) = 1: stardelay(0) = 0
+
+FOR a = 0 TO 5
+sppix(a, 0) = COS(spundx / 30 + PI * 2 / 5 * a) * sprad(0) / 1.2 + 320
+sppiy(a, 0) = SIN(spundx / 30 + PI * 2 / 5 * a) * sprad(0) + 240
+IF a > 0 AND spmor(0) = 2 THEN LINE (sppix(a, 0), sppiy(a, 0))-(sppix(a - 1, 0), sppiy(a - 1, 0)), c
+PSET (sppix(a, 0), sppiy(a, 0)), 9
+NEXT a
+
+FOR a = 6 TO 10
+sppix(a, 0) = COS(spundx / 30 + PI * 2 / 5 * a) * (sprad(0) + 4) / 1.2 + 320
+sppiy(a, 0) = SIN(spundx / 30 + PI * 2 / 5 * a) * (sprad(0) + 4) + 240
+PSET (sppix(a, 0), sppiy(a, 0)), 3
+LINE -(sppix(a - 5, 0), sppiy(a - 5, 0)), 3
+NEXT a
+IF spmor(0) = 2 THEN sprad(0) = sprad(0) * 1.3
+
+IF stardelay(0) < 1 THEN
+ LINE (sppix(0, 0), sppiy(0, 0))-(sppix(2, 0), sppiy(2, 0)), 12
+ LINE -(sppix(4, 0), sppiy(4, 0)), 12
+ LINE -(sppix(1, 0), sppiy(1, 0)), 12
+ LINE -(sppix(3, 0), sppiy(3, 0)), 12
+ LINE -(sppix(0, 0), sppiy(0, 0)), 12
+ grey32 = 16
+END IF
+
+
+END SUB
+
+SUB turret
+
+DO
+
+ IF plasmanfo(b, 3) > 0 THEN
+ PSET (plasmanfo(b, 1), plasmanfo(b, 2)), 0
+ CIRCLE (plasmanfo(b, 1), plasmanfo(b, 2)), 1, 0
+ IF plasmanfo(b, 3) = 1 THEN CIRCLE (indx2, indy2), 0, 10: CIRCLE (indx2, indy2), 1, 2: CIRCLE (indx1, indy1), 0, 10: CIRCLE (indx1, indy1), 1, 2: CIRCLE (indx, indy), 0, 10: CIRCLE (indx, indy), 1, 2: 'LINE (indx, indy)-(indx1, indy1), 10
+ IF plasmanfo(b, 3) = 1 THEN CIRCLE (indx2, indy2), 0, 10: CIRCLE (indx2, indy2), 1, 2: CIRCLE (indx1, indy1), 0, 10: CIRCLE (indx1, indy1), 1, 2: CIRCLE (indx, indy), 0, 10: CIRCLE (indx, indy), 1, 2: 'LINE (indx, indy)-(indx2, indy2), 10
+ IF plasmanfo(b, 3) = 7 THEN CIRCLE (indx2, indy2), 0, 2: CIRCLE (indx2, indy2), 1, 0:  CIRCLE (indx1, indy1), 0, 2: CIRCLE (indx1, indy1), 1, 0: CIRCLE (indx, indy), 0, 2: CIRCLE (indx, indy), 1, 0: 'LINE (indx, indy)-(indx1, indy1), 2
+ IF plasmanfo(b, 3) = 7 THEN CIRCLE (indx2, indy2), 0, 2: CIRCLE (indx2, indy2), 1, 0:  CIRCLE (indx1, indy1), 0, 2: CIRCLE (indx1, indy1), 1, 0: CIRCLE (indx, indy), 0, 2: CIRCLE (indx, indy), 1, 0: 'LINE (indx, indy)-(indx2, indy2), 2
+ IF plasmanfo(b, 3) = 10 THEN CIRCLE (indx2, indy2), 0, 0: CIRCLE (indx2, indy2), 1, 0: CIRCLE (indx1, indy1), 0, 0: CIRCLE (indx1, indy1), 1, 0: CIRCLE (indx, indy), 0, 0: CIRCLE (indx, indy), 1, 0: 'LINE (indx, indy)-(indx1, indy1), 0
+ IF plasmanfo(b, 3) = 10 THEN CIRCLE (indx2, indy2), 0, 0: CIRCLE (indx2, indy2), 1, 0: CIRCLE (indx1, indy1), 0, 0: CIRCLE (indx1, indy1), 1, 0: CIRCLE (indx, indy), 0, 0: CIRCLE (indx, indy), 1, 0: 'LINE (indx, indy)-(indx2, indy2), 0
+
+  plasmanfo(b, 1) = COS(plasmanfo(b, 0)) * 7 + plasmanfo(b, 1)
+  plasmanfo(b, 2) = SIN(plasmanfo(b, 0)) * 7 + plasmanfo(b, 2)
+  plasmanfo(b, 3) = plasmanfo(b, 3) + 1
+
+  IF plasmanfo(b, 3) > 50 THEN
+  plasmanfo(b, 1) = 0
+  plasmanfo(b, 2) = 0
+  plasmanfo(b, 3) = 0
+  END IF
+
+IF plasmanfo(b, 3) > 0 THEN
+ IF plasmanfo(b, 0) > PI * 2 THEN plasmanfo(b, 0) = plasmanfo(b, 0) - (PI * 2)
+ IF plasmanfo(b, 0) < 0 THEN plasmanfo(b, 0) = plasmanfo(b, 0) + (PI * 2)
+ IF plasmanfo(b, 1) > 580 THEN plasmanfo(b, 1) = 60
+ IF plasmanfo(b, 1) < 60 THEN plasmanfo(b, 1) = 580
+ IF plasmanfo(b, 2) > 460 THEN plasmanfo(b, 2) = 20
+ IF plasmanfo(b, 2) < 20 THEN plasmanfo(b, 2) = 460
+END IF
+
+ IF plasmanfo(b, 4) = 0 AND ply(1, 0) - 10 < plasmanfo(b, 1) AND ply(1, 0) + 10 > plasmanfo(b, 1) AND ply(2, 0) - 10 < plasmanfo(b, 2) AND ply(2, 0) + 10 > plasmanfo(b, 2) THEN ply(6, 0) = ply(6, 0) - 5: plasmanfo(b, 3) = 50: grey32 = 7: bbcol = 2
+ IF plasmanfo(b, 4) = 1 AND ply(1, 1) - 10 < plasmanfo(b, 1) AND ply(1, 1) + 10 > plasmanfo(b, 1) AND ply(2, 1) - 10 < plasmanfo(b, 2) AND ply(2, 1) + 10 > plasmanfo(b, 2) THEN ply(6, 1) = ply(6, 1) - 5: plasmanfo(b, 3) = 50: grey32 = 7: bbcol = 2
+
+ PSET (plasmanfo(b, 1), plasmanfo(b, 2)), 10
+ CIRCLE (plasmanfo(b, 1), plasmanfo(b, 2)), 1, 2
+
+ END IF
+ b = b + 1
+LOOP UNTIL b > 15
+LINE (COS(PI + ply(0, 1)) * 3 + ply(1, 1), SIN(PI + ply(0, 1)) * 3 + ply(2, 1))-(COS(turret1dx + ply(0, 1)) * (w6673 / 5 + 3) + (COS(PI + ply(0, 1)) * 3 + ply(1, 1)), SIN(turret1dx + ply(0, 1)) * (w6673 / 5 + 3) + (SIN(PI + ply(0, 1)) * 3 + ply(2, 1 _
+))), 7
+
+
+END SUB
+
